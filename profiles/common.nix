@@ -72,7 +72,8 @@
 
   programs.traceroute.enable = true;
   programs.iotop.enable = true;
-
+  programs.tmux.enable = true;
+  
   services.rsyncd.enable = true;
   services.openssh.enable = true;
  
