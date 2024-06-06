@@ -73,11 +73,23 @@
   programs.traceroute.enable = true;
   programs.iotop.enable = true;
   programs.tmux.enable = true;
-  
+
+  virtualisation.spiceUSBRedirection.enable = true;
+  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd.onShutdown = "shutdown";
+  virtualisation.libvirtd.qemu.package = pkgs.qemu_kvm;
+  virtualisation.libvirtd.qemu.ovmf.packages = [
+    (pkgs.OVMF.override {
+      secureBoot = true;
+      tpmSupport = true;
+    }).fd
+  ];
+
   services.rsyncd.enable = true;
   services.openssh.enable = true;
  
   environment.systemPackages = with pkgs; [
+    inetutils
     mc
     git    
     jq        
