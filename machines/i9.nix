@@ -56,10 +56,10 @@
           prefixLength = 16; #host.lan.prefix;
         }
       ];
-      wan = {
-        useDHCP = false;
-        #   macAddress = host.wan.mac";
-      };
+      # wan = {
+      #   useDHCP = false;
+      #   #   macAddress = host.wan.mac";
+      # };
     };
   };
 }
