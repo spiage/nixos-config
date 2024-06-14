@@ -43,23 +43,29 @@
 
   # networking.interfaces.enp3s0.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlo1.useDHCP = lib.mkDefault true;
+  # networking = {
+  #   bridges = {
+  #     "lan".interfaces = [ "enp3s0" ]; #host.lan.devices;
+  #     #[ "enp3s0" "enp8s0" "enp9s0" "enp10s0" "enp11s0" ];
+  #     #"wan".interfaces = [ "enp3s0" ];
+  #   };
+  #   interfaces = {
+  #     lan.ipv4.addresses = [
+  #       {
+  #         address = "192.168.1.19"; #"${host.lan.ip}";
+  #         prefixLength = 16; #host.lan.prefix;
+  #       }
+  #     ];
+  #     # wan = {
+  #     #   useDHCP = false;
+  #     #   #   macAddress = host.wan.mac";
+  #     # };
+  #   };
+  # };
   networking = {
-    bridges = {
-      "lan".interfaces = [ "enp3s0" ]; #host.lan.devices;
-      #[ "enp3s0" "enp8s0" "enp9s0" "enp10s0" "enp11s0" ];
-      #"wan".interfaces = [ "enp3s0" ];
-    };
-    interfaces = {
-      lan.ipv4.addresses = [
-        {
-          address = "192.168.1.19"; #"${host.lan.ip}";
-          prefixLength = 16; #host.lan.prefix;
-        }
-      ];
-      # wan = {
-      #   useDHCP = false;
-      #   #   macAddress = host.wan.mac";
-      # };
-    };
+    bridges.br0.interfaces = [ "enp3s0" ];
+    useDHCP = false;
+    interfaces.enp3s0.useDHCP = false;
+    interfaces.br0.useDHCP = true;
   };
 }
