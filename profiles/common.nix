@@ -160,5 +160,12 @@
     nut
   ];
 
+  networking.firewall.enable = true;
+  networking.firewall.allowPing = true;
+  networking.firewall.allowedTCPPorts = [ 
+    2049 #NFSv4
+    49152 #libvirt live migration direct connect
+  ];
+
   system.stateVersion = "24.05"; # Did you read the comment?
 }

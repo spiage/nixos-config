@@ -112,9 +112,4 @@
     /srv/nfs/vpool   192.168.0.0/16(rw,nohide,insecure,no_subtree_check,no_root_squash,sync)
   '';
 
-  networking.firewall.enable = true;
-  networking.firewall.allowPing = true;
-  networking.firewall.allowedTCPPorts = [ 
-    2049 #NFSv4
-  ];
 }
