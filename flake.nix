@@ -7,7 +7,7 @@
   outputs = { self, nixpkgs
     , vscode-server 
   }@inputs: {
-    nixosConfigurations.j4125m = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.j4 = nixpkgs.lib.nixosSystem {
       modules = [ 
         machines/j4.nix
         vscode-server.nixosModules.default

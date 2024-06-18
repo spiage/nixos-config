@@ -106,6 +106,17 @@
     openFirewall = true;
   };
 
+{
+  services.nfs.server.enable = true;
+  services.nfs.server.exports = ''
+    /srv/nfs         192.168.0.0/16(rw,fsid=0,no_subtree_check)
+  '';
+    # /export         192.168.1.10(rw,fsid=0,no_subtree_check) 192.168.1.15(rw,fsid=0,no_subtree_check)
+    # /export/kotomi  192.168.1.10(rw,nohide,insecure,no_subtree_check) 192.168.1.15(rw,nohide,insecure,no_subtree_check)
+    # /export/mafuyu  192.168.1.10(rw,nohide,insecure,no_subtree_check) 192.168.1.15(rw,nohide,insecure,no_subtree_check)
+    # /export/sen     192.168.1.10(rw,nohide,insecure,no_subtree_check) 192.168.1.15(rw,nohide,insecure,no_subtree_check)
+    # /export/tomoyo  192.168.1.10(rw,nohide,insecure,no_subtree_check) 192.168.1.15(rw,nohide,insecure,no_subtree_check)
+}
   networking.firewall.enable = true;
   networking.firewall.allowPing = true;
 
