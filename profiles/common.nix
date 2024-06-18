@@ -86,6 +86,40 @@
   ];
 
   services.rpcbind.enable = true; # needed for NFS
+  systemd.mounts = let commonMountOptions = {
+    type = "nfs";
+    mountConfig = {
+      Options = "noatime";
+    };
+  };
+
+  in
+
+  [
+    (commonMountOptions // {
+      what = "j4:/vpool";
+      where = "/mnt/nfs";
+    })
+
+    # (commonMountOptions // {
+    #   what = "server:/oyomot";
+    #   where = "/mnt/oyomot";
+    # })
+  ];
+
+  systemd.automounts = let commonAutoMountOptions = {
+    wantedBy = [ "multi-user.target" ];
+    automountConfig = {
+      TimeoutIdleSec = "600";
+    };
+  };
+
+  in
+
+  [
+    (commonAutoMountOptions // { where = "/mnt/nfs"; })
+    # (commonAutoMountOptions // { where = "/mnt/oyomot"; })
+  ];  
 
   services.rsyncd.enable = true;
   services.openssh.enable = true;
