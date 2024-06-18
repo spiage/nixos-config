@@ -85,6 +85,8 @@
     }).fd
   ];
 
+  services.rpcbind.enable = true; # needed for NFS
+
   services.rsyncd.enable = true;
   services.openssh.enable = true;
  
