@@ -160,12 +160,23 @@
     nut
   ];
 
+  services.k3s = {
+    enable = true;
+    role = "server";
+    token = "4pyrl7.kwye25fo0w0ajns4";
+    serverAddr = "https://192.168.1.2:6443";
+  };  
   networking.firewall.enable = true;
   networking.firewall.allowPing = true;
   networking.firewall.allowedTCPPorts = [ 
     2049 #NFSv4
     49152 #libvirt live migration direct connect
+    6443 # k3s: required so that pods can reach the API server (running on port 6443 by default)
+    2379 # k3s, etcd clients: required if using a "High Availability Embedded etcd" configuration
+    2380 # k3s, etcd peers: required if using a "High Availability Embedded etcd" configuration
   ];
-
+  networking.firewall.allowedUDPPorts = [
+    8472 # k3s, flannel: required if using multi-node for inter-node networking
+  ];
   system.stateVersion = "24.05"; # Did you read the comment?
 }
