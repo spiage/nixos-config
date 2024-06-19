@@ -163,7 +163,7 @@
   services.k3s = {
     enable = true;
     role = "server";
-    token = "4pyrl7.kwye25fo0w0ajns4";
+    token = "Ee1ySKGVulT61yhl2hRDgXVP33OC8R0P";
     serverAddr = "https://192.168.1.2:6443";
   };  
   networking.firewall.enable = true;
