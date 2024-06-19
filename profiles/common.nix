@@ -165,6 +165,7 @@
     role = "server";
     token = "Ee1ySKGVulT61yhl2hRDgXVP33OC8R0P";
     serverAddr = "https://192.168.1.2:6443";
+    extraFlags = "--write-kubeconfig-mode=644";
   };  
   networking.firewall.enable = true;
   networking.firewall.allowPing = true;
