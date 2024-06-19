@@ -67,7 +67,7 @@
   users.users.spiage = {
     isNormalUser = true; 
     description = "spiage";
-    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "vboxusers" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "vboxusers" "video" "docker" ];
   };
 
   programs.traceroute.enable = true;
@@ -123,7 +123,10 @@
 
   services.rsyncd.enable = true;
   services.openssh.enable = true;
- 
+
+  virtualisation.docker.extraOptions =
+    ''--iptables=false --ip-masq=false -b br0'';
+
   environment.systemPackages = with pkgs; [
     kompose
     kubectl
@@ -184,6 +187,7 @@
     6443 # k3s: required so that pods can reach the API server (running on port 6443 by default)
     2379 # k3s, etcd clients: required if using a "High Availability Embedded etcd" configuration
     2380 # k3s, etcd peers: required if using a "High Availability Embedded etcd" configuration
+    10250
   ];
   networking.firewall.allowedUDPPorts = [
     8472 # k3s, flannel: required if using multi-node for inter-node networking
