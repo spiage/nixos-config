@@ -125,6 +125,15 @@
   services.openssh.enable = true;
  
   environment.systemPackages = with pkgs; [
+    kompose
+    kubectl
+    kubernetes
+    kubernetes-helm
+    kubernetes-metrics-server
+
+    bridge-utils 
+    wget
+
     nfs-utils #This package contains various Linux user-space Network File System (NFS) utilities, including RPC mount' and nfs’ daemons.
     inetutils
     mc
