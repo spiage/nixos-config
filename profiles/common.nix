@@ -128,6 +128,7 @@
     ''--iptables=false --ip-masq=false -b br0'';
 
   environment.systemPackages = with pkgs; [
+    k9s
     kompose
     kubectl
     kubernetes
