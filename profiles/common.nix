@@ -162,8 +162,8 @@
     pciutils
     zenstates
     wgetpaste
-    phoronix-test-suite     yasm     nasm cmake unzip x264 ## $phoronix-test-suite benchmark build-ffmpeg
-    geekbench
+    # phoronix-test-suite     yasm     nasm cmake unzip x264 ## $phoronix-test-suite benchmark build-ffmpeg
+    # geekbench
     rsync
     restic
     rustic-rs
