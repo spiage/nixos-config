@@ -37,9 +37,9 @@
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/3e86da97-ede3-4c0c-9dbf-9cdbc8550b44"; }
-    ];
+  # swapDevices =
+  #   [ { device = "/dev/disk/by-uuid/3e86da97-ede3-4c0c-9dbf-9cdbc8550b44"; }
+  #   ];
 
   # networking.interfaces.enp3s0.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlo1.useDHCP = lib.mkDefault true;

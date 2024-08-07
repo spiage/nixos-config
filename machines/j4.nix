@@ -22,9 +22,9 @@
       options = [ "fmask=0022" "dmask=0022" ];
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/0a3e5298-1553-4efb-ba47-3bc330d803b0"; }
-    ];
+  # swapDevices =
+  #   [ { device = "/dev/disk/by-uuid/0a3e5298-1553-4efb-ba47-3bc330d803b0"; }
+  #   ];
 
   fileSystems."/srv/Backups" =
     { device = "/dev/disk/by-uuid/e1300de0-05f9-4ca4-9640-a1976be21f49";

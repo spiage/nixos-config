@@ -31,9 +31,9 @@
       options = [ "subvol=nix" "noatime" ];
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/fb23503e-b052-4737-bed8-38c14ef5ef47"; }
-    ];
+  # swapDevices =
+  #   [ { device = "/dev/disk/by-uuid/fb23503e-b052-4737-bed8-38c14ef5ef47"; }
+  #   ];
 
   # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp12s0.useDHCP = lib.mkDefault true;

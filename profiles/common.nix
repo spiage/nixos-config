@@ -1,12 +1,12 @@
 { pkgs, config, lib, inputs, ... }:
 {
 
-  zramSwap.enable = true;
-  zramSwap.memoryPercent = 100;
-  boot.kernel.sysctl = { 
-    "vm.swappiness" = 180;
-    "vm.page-cluster" = 0;
-  };
+  # zramSwap.enable = true;
+  # zramSwap.memoryPercent = 100;
+  # boot.kernel.sysctl = { 
+  #   "vm.swappiness" = 180;
+  #   "vm.page-cluster" = 0;
+  # };
 
   boot.supportedFilesystems = [ "ntfs" "btrfs" "ext4" "xfs" ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
