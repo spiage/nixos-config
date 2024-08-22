@@ -115,6 +115,10 @@
     enable = true;
     openFirewall = true;
   };
+
+  networking.firewall.enable = true;
+  networking.firewall.allowPing = true;
+  networking.firewall.extraCommands = ''iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns'';
   
   services.nfs.server.enable = true;
   services.nfs.server.exports = ''
