@@ -106,6 +106,16 @@
     openFirewall = true;
   };
 
+  services.avahi = {
+    publish.enable = true;
+    publish.userServices = true;
+    # ^^ Needed to allow samba to automatically register mDNS records (without the need for an `extraServiceFile`
+    nssmdns4 = true;
+    # ^^ Not one hundred percent sure if this is needed- if it aint broke, don't fix it
+    enable = true;
+    openFirewall = true;
+  };
+  
   services.nfs.server.enable = true;
   services.nfs.server.exports = ''
     /srv/nfs         192.168.0.0/16(rw,fsid=0,no_subtree_check,no_root_squash,sync)
