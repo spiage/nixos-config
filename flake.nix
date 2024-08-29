@@ -1,6 +1,6 @@
 {
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable-small";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/master";
   inputs.vscode-server.url = "github:nix-community/nixos-vscode-server";
   inputs.vscode-server.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -32,6 +32,17 @@
     nixosConfigurations.i7 = nixpkgs.lib.nixosSystem {
       modules = [ 
         machines/i7.nix
+        vscode-server.nixosModules.default
+        ({ config, pkgs, ... }: {
+          services.vscode-server.enable = true;
+        })
+      ];
+      specialArgs.inputs = inputs;
+      system = "x86_64-linux";
+    };
+    nixosConfigurations.q1 = nixpkgs.lib.nixosSystem {
+      modules = [ 
+        machines/q1.nix
         vscode-server.nixosModules.default
         ({ config, pkgs, ... }: {
           services.vscode-server.enable = true;
