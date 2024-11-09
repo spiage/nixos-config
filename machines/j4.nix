@@ -51,13 +51,13 @@
     settings = {
       global = {
         "workgroup" = "WORKGROUP";
-        "server string" = "smbnix";
-        "netbios name" = "smbnix";
+        "server string" = "j4";
+        "netbios name" = "j4";
         "security" = "user";
         #"use sendfile" = "yes";
         #"max protocol" = "smb2";
         # note: localhost is the ipv6 localhost ::1
-        "hosts allow" = "192.168.0. 127.0.0.1 localhost";
+        "hosts allow" = "192.168.1. 127.0.0.1 localhost";
         "hosts deny" = "0.0.0.0/0";
         "guest account" = "nobody";
         "map to guest" = "bad user";
@@ -118,6 +118,7 @@
   networking.firewall.enable = true;
   networking.firewall.allowPing = true;
   networking.firewall.extraCommands = ''iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns'';
+  networking.firewall.allowedTCPPorts = [ 7946 ];
   
   services.nfs.server.enable = true;
   services.nfs.server.exports = ''
