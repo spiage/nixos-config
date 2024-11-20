@@ -190,6 +190,7 @@
     2380 # k3s, etcd peers: required if using a "High Availability Embedded etcd" configuration
     9100 # found input from a7
     10250 # found input from i9
+    7946 # found
   ];
   networking.firewall.allowedUDPPorts = [
     8472 # k3s, flannel: required if using multi-node for inter-node networking
