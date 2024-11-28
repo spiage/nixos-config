@@ -6,6 +6,7 @@
   imports = [ 
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix 
+    ../profiles/k3s.nix 
   ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];

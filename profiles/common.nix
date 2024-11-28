@@ -128,12 +128,6 @@
     ''--iptables=false --ip-masq=false -b br0'';
 
   environment.systemPackages = with pkgs; [
-    k9s
-    kompose
-    kubectl
-    kubernetes
-    kubernetes-helm
-    kubernetes-metrics-server
 
     bridge-utils 
     wget
@@ -173,13 +167,6 @@
     nut
   ];
 
-  services.k3s = {
-    enable = true;
-    role = "server";
-    token = "Ee1ySKGVulT61yhl2hRDgXVP33OC8R0P";
-    serverAddr = "https://192.168.1.2:6443";
-    extraFlags = "--write-kubeconfig-mode=644";
-  };  
   networking.firewall.enable = true;
   networking.firewall.allowPing = true;
   networking.firewall.allowedTCPPorts = [ 

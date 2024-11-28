@@ -4,6 +4,7 @@
   imports = [ 
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix 
+    ../profiles/k3s.nix 
   ];
 
   services.xserver.videoDrivers = [ "nvidia" ];
