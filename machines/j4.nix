@@ -1,5 +1,7 @@
 {
+
   networking.hostName = "j4"; # Define your hostname.
+  networking.hostId = "6745d966";
 
   imports = [ 
     ../profiles/boot/systemd-boot.nix

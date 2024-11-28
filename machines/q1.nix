@@ -1,7 +1,7 @@
-{ config, ...}:
 {
   
   networking.hostName = "q1"; # Define your hostname.
+  networking.hostId = "9c60a626";
 
   imports = [ 
     ../profiles/boot/systemd-boot.nix

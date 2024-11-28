@@ -1,4 +1,19 @@
 { pkgs, config, lib, inputs, ... }:
+
+let
+  zfsCompatibleKernelPackages = lib.filterAttrs (
+    name: kernelPackages:
+    (builtins.match "linux_[0-9]+_[0-9]+" name) != null
+    && (builtins.tryEval kernelPackages).success
+    && (!kernelPackages.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken)
+  ) pkgs.linuxKernel.packages;
+  latestKernelPackage = lib.last (
+    lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
+      builtins.attrValues zfsCompatibleKernelPackages
+    )
+  );
+  homeDomainName = "k8s.local";
+in
 {
 
   # zramSwap.enable = true;
@@ -8,8 +23,8 @@
   #   "vm.page-cluster" = 0;
   # };
 
-  boot.supportedFilesystems = [ "ntfs" "btrfs" "ext4" "xfs" ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.supportedFilesystems = [ "ntfs" "btrfs" "ext4" "xfs" "zfs" ];
+  boot.kernelPackages = latestKernelPackage;
   boot.swraid.enable = false;
   boot.initrd.systemd.enable = true;
   boot.loader.systemd-boot.memtest86.enable = true;
@@ -36,7 +51,27 @@
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
   networking.networkmanager.enable = true;
+  networking.networkmanager.plugins = lib.mkForce [ ];
+  ### default plugins are:
+        # networkmanager.plugins = with pkgs; [
+        #   networkmanager-fortisslvpn
+        #   networkmanager-iodine
+        #   networkmanager-l2tp
+        #   networkmanager-openconnect
+        #   networkmanager-openvpn
+        #   networkmanager-vpnc
+        #   networkmanager-sstp
+        # ];
+  networking.networkmanager.appendNameservers = [ "192.168.1.1" ];
   networking.useDHCP = lib.mkDefault true;
+  networking.extraHosts =
+    ''
+      192.168.1.2   a7 a7.${homeDomainName}
+      192.168.1.201 i9 i9.${homeDomainName}
+      192.168.1.15  i7 i7.${homeDomainName}
+      192.168.1.16  j4 j4.${homeDomainName}
+      192.168.1.18  q1 q1.${homeDomainName}
+    '';
 
   time.timeZone = "Europe/Moscow";
 

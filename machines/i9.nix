@@ -1,5 +1,7 @@
 {
+
   networking.hostName = "i9"; # Define your hostname.
+  networking.hostId = "2ae0c11a";
 
   imports = [ 
     ../profiles/boot/systemd-boot.nix

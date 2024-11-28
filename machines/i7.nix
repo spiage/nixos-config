@@ -2,10 +2,12 @@
 {
   
   networking.hostName = "i7"; # Define your hostname.
+  networking.hostId = "52a8a4b0";
 
   imports = [ 
     ../profiles/boot/grub2.nix 
     ../profiles/common.nix 
+    ../profiles/k3s.nix 
   ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ehci_pci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
