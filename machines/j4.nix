@@ -28,22 +28,28 @@
   #   [ { device = "/dev/disk/by-uuid/0a3e5298-1553-4efb-ba47-3bc330d803b0"; }
   #   ];
 
-  fileSystems."/srv/Backups" =
-    { device = "/dev/disk/by-uuid/e1300de0-05f9-4ca4-9640-a1976be21f49";
-      fsType = "btrfs";
-      options = [ "subvol=Backups" "noatime" ]; #compress=zstd" "noatime" ];
-    };
+  # fileSystems."/srv/Backups" =
+  #   { device = "/dev/disk/by-uuid/e1300de0-05f9-4ca4-9640-a1976be21f49";
+  #     fsType = "btrfs";
+  #     options = [ "subvol=Backups" "noatime" ]; #compress=zstd" "noatime" ];
+  #   };
 
-  fileSystems."/srv/Shares/Public" =
-    { device = "/dev/disk/by-uuid/e1300de0-05f9-4ca4-9640-a1976be21f49";
-      fsType = "btrfs";
-      options = [ "subvol=Shares/Public" "noatime" ]; # "compress=zstd" "noatime" ];
-    };
+  # fileSystems."/srv/Shares/Public" =
+  #   { device = "/dev/disk/by-uuid/e1300de0-05f9-4ca4-9640-a1976be21f49";
+  #     fsType = "btrfs";
+  #     options = [ "subvol=Shares/Public" "noatime" ]; # "compress=zstd" "noatime" ];
+  #   };
 
-  fileSystems."/srv/Shares/Private" =
-    { device = "/dev/disk/by-uuid/e1300de0-05f9-4ca4-9640-a1976be21f49";
-      fsType = "btrfs";
-      options = [ "subvol=Shares/Private" "noatime" ]; # "compress=zstd" "noatime" ];
+  # fileSystems."/srv/Shares/Private" =
+  #   { device = "/dev/disk/by-uuid/e1300de0-05f9-4ca4-9640-a1976be21f49";
+  #     fsType = "btrfs";
+  #     options = [ "subvol=Shares/Private" "noatime" ]; # "compress=zstd" "noatime" ];
+  #   };
+
+  fileSystems."/srv" =
+    { device = "/dev/disk/by-uuid/8f0042c2-b6ac-4d9a-b08a-9b5b7a6c809c";
+      fsType = "xfs";
+      options = [ "noatime" ]; # "compress=zstd" "noatime" ];
     };
 
   services.samba = {
