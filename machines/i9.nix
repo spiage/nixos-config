@@ -6,7 +6,6 @@
   imports = [ 
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix 
-    ../profiles/k3s.nix 
   ];
 
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -35,7 +34,7 @@
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/0E31-C16B";
+    { device = "/dev/disk/by-uuid/E1BF-23DD";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };

@@ -50,6 +50,16 @@ in
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
+  # Физический интерфейс (enp14s0) → eth0
+  services.udev.extraRules = ''
+    SUBSYSTEM=="net", ACTION=="add", 
+    ATTR{address}=="74:56:3c:78:21:ad",  # MAC физического интерфейса
+    NAME="eth0"
+    
+    SUBSYSTEM=="net", ACTION=="add", 
+    ATTR{address}=="00:15:5d:01:02:00",  # MAC Hyper-V интерфейса
+    NAME="eth0"
+  '';
   networking.networkmanager.enable = true;
   networking.networkmanager.plugins = lib.mkForce [ ];
   ### default plugins are:
