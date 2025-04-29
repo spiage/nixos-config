@@ -138,7 +138,7 @@
 
   services.ollama = {
     enable = true;
-    # package = pkgs.unstable.ollama;
+    package = (pkgs.ollama.override { acceleration = "cuda"; })
     acceleration = "cuda";
     environmentVariables = {
       #     HIP_VISIBLE_DEVICES = "0,1";
