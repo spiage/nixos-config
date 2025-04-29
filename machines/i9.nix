@@ -1,3 +1,4 @@
+{ pkgs, ... }:
 {
 
   networking.hostName = "i9"; # Define your hostname.
@@ -50,7 +51,7 @@
     nvitop
     #      nvidia-vaapi-driver
   ];
-  
+
   environment.shellAliases = {
     gwe = "setsid gwe";
     gputop = "nvidia-smi -l 1";
