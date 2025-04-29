@@ -212,7 +212,7 @@ in
     nut
   ];
 
-  networking.firewall.enable = true;
+  networking.firewall.enable = false;
   networking.firewall.allowPing = true;
   networking.firewall.allowedTCPPorts = [ 
     2049 #NFSv4
