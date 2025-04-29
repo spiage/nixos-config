@@ -49,13 +49,13 @@
     zenith-nvidia
     nvitop
     #      nvidia-vaapi-driver
-    shellAliases = {
-      gwe = "setsid gwe";
-      gputop = "nvidia-smi -l 1";
-      gpu_temp = "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits";
-      nvidia-settings = "setsid nvidia-settings";
-    };
   ]
+  environment.shellAliases = {
+    gwe = "setsid gwe";
+    gputop = "nvidia-smi -l 1";
+    gpu_temp = "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits";
+    nvidia-settings = "setsid nvidia-settings";
+  };
 
   systemd.services.nvidia-poweroff = rec {
     enable = false;
