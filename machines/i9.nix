@@ -42,7 +42,7 @@
     };
   };
   environment = {
-    (gpufetch.override { cudaSupport = true; })
+    (pkgs.gpufetch.override { cudaSupport = true; })
     nvtopPackages.nvidia
     gwe
     vulkan-tools
