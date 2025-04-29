@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 {
 
   networking.hostName = "i9"; # Define your hostname.
