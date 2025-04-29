@@ -43,7 +43,7 @@
     };
   };
   environment.systemPackages = with pkgs; [
-    (pkgs.ollama.override { acceleration = "cuda"; })
+    ollama
     (pkgs.gpufetch.override { cudaSupport = true; })
     nvtopPackages.nvidia
     gwe
