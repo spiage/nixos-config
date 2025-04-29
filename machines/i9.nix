@@ -42,15 +42,13 @@
     };
   };
   environment = {
-    systemPackages = with pkgs.unstable; [
-      (gpufetch.override { cudaSupport = true; })
-      nvtopPackages.nvidia
-      gwe
-      vulkan-tools
-      zenith-nvidia
-      nvitop
-      #      nvidia-vaapi-driver
-    ];
+    (gpufetch.override { cudaSupport = true; })
+    nvtopPackages.nvidia
+    gwe
+    vulkan-tools
+    zenith-nvidia
+    nvitop
+    #      nvidia-vaapi-driver
     shellAliases = {
       gwe = "setsid gwe";
       gputop = "nvidia-smi -l 1";
@@ -78,7 +76,7 @@
       ExecStart = "-${pkgs.kmod}/bin/rmmod nvidia_drm nvidia_modeset nvidia_uvm nvidia";
     };
   };
-  
+
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/8cdd3d84-92f6-4fdf-b22a-c802f889531c";
       fsType = "btrfs";
