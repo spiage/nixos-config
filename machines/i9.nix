@@ -41,7 +41,7 @@
       enable32Bit = true;
     };
   };
-  environment = {
+  environment.systemPackages = with pkgs; [
     (pkgs.gpufetch.override { cudaSupport = true; })
     nvtopPackages.nvidia
     gwe
@@ -55,7 +55,7 @@
       gpu_temp = "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits";
       nvidia-settings = "setsid nvidia-settings";
     };
-  };
+  ]
 
   systemd.services.nvidia-poweroff = rec {
     enable = false;
