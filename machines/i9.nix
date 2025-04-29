@@ -12,9 +12,73 @@
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
+  # boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
+  boot = {
+    blacklistedKernelModules = [ "nouveau" ];
+    kernelParams = [ "nvidia.NVreg_EnableGpuFirmware=1" ];
+    kernelModules = [ "nvidia_uvm" ];
+  };
 
+  hardware = {
+    nvidia = {
+      modesetting.enable = true;
+      powerManagement.enable = true;
+      open = true;
+
+      package = config.boot.kernelPackages.nvidiaPackages.beta;
+
+      #  package = config.boot.kernelPackages.nvidiaPackages.mkDriver {
+      #    version = "575.51.02";
+      #    sha256_64bit = "sha256-XZ0N8ISmoAC8p28DrGHk/YN1rJsInJ2dZNL8O+Tuaa0=";
+      #    openSha256 = "sha256-6n9mVkEL39wJj5FB1HBml7TTJhNAhS/j5hqpNGFQE4w=";
+      #    settingsSha256 = "sha256-NQg+QDm9Gt+5bapbUO96UFsPnz1hG1dtEwT/g/vKHkw=";
+      #    usePersistenced = false;
+      #  };
+    };
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+    };
+  };
+  environment = {
+    systemPackages = with pkgs.unstable; [
+      (gpufetch.override { cudaSupport = true; })
+      nvtopPackages.nvidia
+      gwe
+      vulkan-tools
+      zenith-nvidia
+      nvitop
+      #      nvidia-vaapi-driver
+    ];
+    shellAliases = {
+      gwe = "setsid gwe";
+      gputop = "nvidia-smi -l 1";
+      gpu_temp = "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits";
+      nvidia-settings = "setsid nvidia-settings";
+    };
+  };
+
+  systemd.services.nvidia-poweroff = rec {
+    enable = false;
+    description = "Unload nvidia modules from kernel";
+    documentation = [ "man:modprobe(8)" ];
+
+    unitConfig.DefaultDependencies = "no";
+
+    after = [ "umount.target" ];
+    before = wantedBy;
+    wantedBy = [
+      "shutdown.target"
+      "final.target"
+    ];
+
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "-${pkgs.kmod}/bin/rmmod nvidia_drm nvidia_modeset nvidia_uvm nvidia";
+    };
+  };
+  
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/8cdd3d84-92f6-4fdf-b22a-c802f889531c";
       fsType = "btrfs";
