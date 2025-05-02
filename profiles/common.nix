@@ -13,6 +13,9 @@ let
     )
   );
   homeDomainName = "k8s.local";
+  kubeMasterIP = "192.168.1.2";
+  kubeMasterHostname = "a7.k8s.local";
+
 in
 {
 
@@ -35,31 +38,12 @@ in
   hardware.bluetooth.enable = true;
   hardware.usb-modeswitch.enable = true;
 
-  # hardware.nvidia = {
-  #   modesetting.enable = true;
-  #   powerManagement.enable = false;
-  #   powerManagement.finegrained = false;
-  #   open = false;
-  #   nvidiaSettings = true;
-  #   package = config.boot.kernelPackages.nvidiaPackages.stable;
-  # };
-
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   nixpkgs.config.allowUnfree = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
-  # Физический интерфейс (enp14s0) → eth0
-  services.udev.extraRules = ''
-    SUBSYSTEM=="net", ACTION=="add", 
-    ATTR{address}=="74:56:3c:78:21:ad",  # MAC физического интерфейса
-    NAME="eth0"
-    
-    SUBSYSTEM=="net", ACTION=="add", 
-    ATTR{address}=="00:15:5d:01:02:00",  # MAC Hyper-V интерфейса
-    NAME="eth0"
-  '';
   networking.networkmanager.enable = true;
   networking.networkmanager.plugins = lib.mkForce [ ];
   ### default plugins are:
@@ -76,6 +60,9 @@ in
   networking.useDHCP = lib.mkDefault true;
   networking.extraHosts =
     ''
+      ${kubeMasterIP} ${kubeMasterHostname}
+      136.243.168.226 download.qt.io
+      192.168.122.60 u2004-01
       192.168.1.2   a7 a7.${homeDomainName}
       192.168.1.201 i9 i9.${homeDomainName}
       192.168.1.15  i7 i7.${homeDomainName}
@@ -112,7 +99,7 @@ in
   users.users.spiage = {
     isNormalUser = true; 
     description = "spiage";
-    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "vboxusers" "video" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "vboxusers" "video" "docker" "podman" ];
   };
 
   programs.traceroute.enable = true;
@@ -129,6 +116,7 @@ in
       tpmSupport = true;
     }).fd
   ];
+  virtualisation.libvirtd.allowedBridges = [ "virbr1" "virbr0" "br0" ];
 
   services.rpcbind.enable = true; # needed for NFS
   systemd.mounts = let commonMountOptions = {
@@ -145,11 +133,6 @@ in
       what = "j4:/vpool";
       where = "/mnt/nfs";
     })
-
-    # (commonMountOptions // {
-    #   what = "server:/oyomot";
-    #   where = "/mnt/oyomot";
-    # })
   ];
 
   systemd.automounts = let commonAutoMountOptions = {
@@ -214,12 +197,15 @@ in
 
   networking.firewall.enable = false;
   networking.firewall.allowPing = true;
+  networking.networkmanager.unmanaged = [ "br0" ];
   networking.firewall.allowedTCPPorts = [ 
     2049 #NFSv4
     49152 #libvirt live migration direct connect
     6443 # k3s: required so that pods can reach the API server (running on port 6443 by default)
     2379 # k3s, etcd clients: required if using a "High Availability Embedded etcd" configuration
     2380 # k3s, etcd peers: required if using a "High Availability Embedded etcd" configuration
+    8080
+    3000
     9100 # found input from a7
     10250 # found input from i9
     7946 # found

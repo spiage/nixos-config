@@ -5,6 +5,7 @@
 
   imports = [ 
     ../profiles/boot/systemd-boot.nix
+    ../profiles/video/nvidia-simple.nix
     ../profiles/common.nix 
     ../profiles/k3s.nix 
   ];
