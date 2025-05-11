@@ -1,60 +1,69 @@
-# vxlan.nix
+# modules/vxlan.nix
 { config, lib, pkgs, ... }:
 
-{
-  systemd.network = {
-    netdevs = {
-      # Конфигурация VXLAN
-      "40-vxlan0" = {
+let
+  homeDomainName = "home.lan";
+  vxlanId = 42;
+  vxlanPort = 4789;
+  vxlanNetwork = "10.0.0.0/16";
+in {
+  options.vxlan.enable = lib.mkEnableOption "Enable VXLAN overlay network";
+
+  config = lib.mkIf config.vxlan.enable {
+    # Настройка VXLAN и моста
+    systemd.network = {
+      netdevs."30-vxlan" = {
         netdevConfig = {
           Name = "vxlan0";
           Kind = "vxlan";
         };
         vxlanConfig = {
-          VNI = 100;
-          Group = "239.1.1.1";
-          DestinationPort = 4789;
-          TTL = 5;
-          # UnderlyingDevice = "eth0";
+          Id = vxlanId;
+          Remote = "239.1.1.1";
+          Port = vxlanPort;
+          GroupPolicyExtension = true;
         };
       };
 
-      # Явное определение бриджа br0 (если ещё не определено)
-      "20-br0" = {
-        netdevConfig = {
-          Name = "br0";
-          Kind = "bridge";
+      networks."40-br-vxlan" = {
+        matchConfig.Name = "br-vxlan";
+        bridge = ["vxlan0"];
+        networkConfig = {
+          Bridge = true;
+          IPMasquerade = "both";
+          LLMNR = true;
+          MulticastDNS = true;
         };
-        bridgeConfig = {
-          STP = true;
-          ForwardDelaySec = 4;
-        };
+        addresses = [{
+          addressConfig.Address = 
+            let 
+              hostOctet = lib.last (lib.splitString "." config.networking.hostName);
+            in "10.0.0.${hostOctet}/16";
+        }];
       };
     };
 
-    networks = {
-      # Привязка VXLAN к бриджу
-      "40-vxlan0" = {
-        matchConfig.Name = "vxlan0";
-        bridge = [ "br0" ];
-        linkConfig.RequiredForOnline = "no";
-      };
-
+    # Настройка libvirt для использования моста
+    environment.etc."libvirt/qemu/networks/vxlan.xml" = {
+      text = ''
+        <network>
+          <name>vxlan</name>
+          <forward mode="bridge"/>
+          <bridge name="br-vxlan"/>
+        </network>
+      '';
+      mode = "0644";
     };
-  };
 
-  # Настройки фаервола
-  networking.firewall.allowedUDPPorts = [ 4789 ];
+    virtualisation.libvirtd = {
+      enable = true;
+      qemu = {
+        package = pkgs.qemu_kvm;
+        runAsRoot = true;
+        swtpm.enable = true;
+      };
+    };
 
-  # Гарантия загрузки модуля ядра
-  boot.kernelModules = [ "vxlan" ];
-
-  # Корректные systemd зависимости
-  systemd.services.systemd-networkd = {
-    after = [ 
-      "network-pre.target" 
-      "systemd-networkd-wait-online.service" 
-    ];
-    requires = [ "network-pre.target" ];
+    networking.firewall.allowedUDPPorts = [vxlanPort];
   };
 }

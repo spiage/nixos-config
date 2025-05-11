@@ -268,13 +268,13 @@
     in ["${automount_opts},credentials=/etc/nixos/smb-secrets,uid=1000,gid=100"];
   };
 
-  # services.k3s = {
-  #   enable = true;
-  #   role = "server";
-  #   token = "Ee1ySKGVulT61yhl2hRDgXVP33OC8R0P"; #tr -dc A-Za-z0-9 </dev/urandom | head -c 32; echo
-  #   clusterInit = true;
-  #   extraFlags = "--write-kubeconfig-mode=644";
-  # };
+  services.k3s = {
+    enable = true;
+    role = "server";
+    token = "Ee1ySKGVulT61yhl2hRDgXVP33OC8R0P"; #tr -dc A-Za-z0-9 </dev/urandom | head -c 32; echo
+    clusterInit = true;
+    extraFlags = "--write-kubeconfig-mode=644";
+  };
 
   # Проблема - русские имена файлов не поддерживаются в винде :(
   # services.nfs.server = {
@@ -286,32 +286,10 @@
   # networking.firewall.allowedTCPPorts = [ 2049 ]; # открыть порт NFS
 
   services.samba = {
-    enable = true;
-    openFirewall = true;
-    settings = {
-      global = {
-        security = "auto"; # Анонимный доступ
-        "map to guest" = "Bad User";
-        "guest account" = "nobody";
-        "unix extensions" = "no"; # Для совместимости с Windows
-      };
-
-      # homelab = {
-      #   path = "/mnt/store/zstd19";
-        # "create mask" = "0666";
-        # "directory mask" = "0777";
-        # "force user" = "nobody";
-        # "force group" = "nogroup";
-      "public" = {
-        "path" = "/mnt/store/zstd19";
-        "browseable" = "yes";
-        "read only" = "no";
-        "guest ok" = "yes";
-        "create mask" = "0644";
-        "directory mask" = "0755";
-        "force user" = "username";
-        "force group" = "groupname";
-      };
+    shares.testshare = {
+      path = "/mnt/store/zstd19";
+      writable = "true";
+      comment = "Hello World!";
     };
   };
 

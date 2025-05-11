@@ -9,7 +9,7 @@
     ../profiles/video/nvidia-simple.nix
     ../profiles/network/ntp-server-ru.nix
     ../profiles/common.nix 
-    # ../profiles/k3s.nix 
+    ../profiles/k3s.nix 
   ];
 
   systemd.network = {
