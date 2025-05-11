@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   
   networking.hostName = "q1"; # Define your hostname.
@@ -6,9 +7,29 @@
   imports = [ 
     ../profiles/boot/systemd-boot.nix
     ../profiles/video/nvidia-simple.nix
+    ../profiles/network/ntp-server-ru.nix
     ../profiles/common.nix 
-    ../profiles/k3s.nix 
+    # ../profiles/k3s.nix 
   ];
+
+  systemd.network = {
+    links."10-eth0".matchConfig.MACAddress = 
+      lib.concatStringsSep " " [  # Объединение через пробел
+        "20:7c:14:f4:21:34"   # Физический интерфейс
+      ];
+    
+    networks = {
+      "30-br0" = {
+        address = [ 
+          "192.168.1.18/24" 
+          # Для IPv6 (если нужно):
+          # "2001:db8::a7/64"
+        ];
+      };
+    };    
+  };
+
+  # services.ntp-ru.enable = true;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];

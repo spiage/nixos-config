@@ -15,9 +15,102 @@ let
   homeDomainName = "k8s.local";
   kubeMasterIP = "192.168.1.2";
   kubeMasterHostname = "a7.k8s.local";
+  
+  # Функция для генерации настроек VXLAN в зависимости от хоста
+  # vxlanConfig = { localIP, remoteIPs, vxlanIP }: {
+  #   systemd.network.netdevs."10-vxlan0" = {
+  #     netdevConfig.Name = "vxlan0";
+  #     netdevConfig.Kind = "vxlan";
+  #     vxlanConfig = {
+  #       VNI = 100;
+  #       Local = localIP;
+  #       Remote = remoteIPs;
+  #       Port = 4789;
+  #     };
+  #   };
 
+  #   systemd.network.networks."10-br-vxlan" = {
+  #     matchConfig.Name = "br-vxlan";
+  #     networkConfig.Address = "${vxlanIP}/24";
+  #     networkConfig.DHCP = "no";
+  #     links = [ "vxlan0" ];
+  #   };
+  # };
 in
 {
+
+  time.timeZone = "Europe/Moscow";
+
+  imports = [ 
+    ../profiles/network/ntp-client.nix
+    ../profiles/vxlan.nix # не работает, перепробовал всякое :(
+    # ../profiles/ceph.nix
+  ];
+
+  # vxlanConfig.enable = true;
+
+  # networking.bridges."br-vxlan".interfaces = [];
+
+  # Общие настройки для всех хостов
+  networking.useNetworkd = true; # Полный переход на systemd-networkd
+  networking.useDHCP = false;
+  systemd.network = {
+    enable = true;
+    links = {
+      "10-eth0" = {
+        matchConfig.MACAddress = lib.mkDefault "00:00:00:00:00:00"; # Переопределяется в хостах
+        linkConfig.Name = "eth0";
+      };
+    };
+    netdevs = {
+      "20-br0" = {
+        netdevConfig = {
+          Name = "br0";
+          Kind = "bridge";
+        };
+        bridgeConfig = {
+          STP = true;
+          ForwardDelaySec = 4;
+        };
+      };
+    };    
+    networks = {
+      # Конфигурация для физического интерфейса eth0
+      "20-eth0" = {
+        matchConfig.Name = "eth0";
+        networkConfig = {
+          Bridge = "br0";
+          Description = "Physical interface bridged to br0";
+        };
+        linkConfig.RequiredForOnline = "no";
+      };
+
+      # Основная конфигурация сети на бридже
+      "30-br0" = {
+        matchConfig.Name = "br0";
+        networkConfig = {
+          DHCP = "no";
+          DNS = "192.168.1.1";
+          Gateway = "192.168.1.1";
+          ConfigureWithoutCarrier = true;
+        };
+        address = [ 
+          # Переносим адреса из хостовых конфигов сюда
+        ];
+      };
+    };
+  };
+  networking.extraHosts =
+    ''
+      ${kubeMasterIP} ${kubeMasterHostname}
+      136.243.168.226 download.qt.io
+      192.168.122.60 u2004-01
+      192.168.1.2   a7 a7.${homeDomainName}
+      192.168.1.201 i9 i9.${homeDomainName}
+      192.168.1.15  i7 i7.${homeDomainName}
+      192.168.1.16  j4 j4.${homeDomainName}
+      192.168.1.18  q1 q1.${homeDomainName}
+    '';
 
   # zramSwap.enable = true;
   # zramSwap.memoryPercent = 100;
@@ -44,8 +137,8 @@ in
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
-  networking.networkmanager.enable = true;
-  networking.networkmanager.plugins = lib.mkForce [ ];
+  networking.networkmanager.enable = false;
+  # networking.networkmanager.plugins = lib.mkForce [ ];
   ### default plugins are:
         # networkmanager.plugins = with pkgs; [
         #   networkmanager-fortisslvpn
@@ -56,21 +149,19 @@ in
         #   networkmanager-vpnc
         #   networkmanager-sstp
         # ];
-  networking.networkmanager.appendNameservers = [ "192.168.1.1" ];
-  networking.useDHCP = lib.mkDefault true;
-  networking.extraHosts =
-    ''
-      ${kubeMasterIP} ${kubeMasterHostname}
-      136.243.168.226 download.qt.io
-      192.168.122.60 u2004-01
-      192.168.1.2   a7 a7.${homeDomainName}
-      192.168.1.201 i9 i9.${homeDomainName}
-      192.168.1.15  i7 i7.${homeDomainName}
-      192.168.1.16  j4 j4.${homeDomainName}
-      192.168.1.18  q1 q1.${homeDomainName}
-    '';
-
-  time.timeZone = "Europe/Moscow";
+  # networking.networkmanager.appendNameservers = [ "192.168.1.1" ];
+  # networking.useDHCP = lib.mkDefault true;
+  # networking.extraHosts =
+  #   ''
+  #     ${kubeMasterIP} ${kubeMasterHostname}
+  #     136.243.168.226 download.qt.io
+  #     192.168.122.60 u2004-01
+  #     192.168.1.2   a7 a7.${homeDomainName}
+  #     192.168.1.201 i9 i9.${homeDomainName}
+  #     192.168.1.15  i7 i7.${homeDomainName}
+  #     192.168.1.16  j4 j4.${homeDomainName}
+  #     192.168.1.18  q1 q1.${homeDomainName}
+  #   '';
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "ru_RU.UTF-8";
@@ -99,7 +190,7 @@ in
   users.users.spiage = {
     isNormalUser = true; 
     description = "spiage";
-    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "vboxusers" "video" "docker" "podman" ];
+    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "libvirt" "vboxusers" "video" "docker" "podman" ];
   };
 
   programs.traceroute.enable = true;
@@ -116,7 +207,7 @@ in
       tpmSupport = true;
     }).fd
   ];
-  virtualisation.libvirtd.allowedBridges = [ "virbr1" "virbr0" "br0" ];
+  virtualisation.libvirtd.allowedBridges = [ "virbr1" "virbr0" "br0" "br-vxlan" ];
 
   services.rpcbind.enable = true; # needed for NFS
   systemd.mounts = let commonMountOptions = {
@@ -156,6 +247,9 @@ in
     ''--iptables=false --ip-masq=false -b br0'';
 
   environment.systemPackages = with pkgs; [
+
+    tcpdump
+    iperf3
 
     bridge-utils 
     wget
@@ -197,7 +291,7 @@ in
 
   networking.firewall.enable = false;
   networking.firewall.allowPing = true;
-  networking.networkmanager.unmanaged = [ "br0" ];
+  networking.networkmanager.unmanaged = [ "virbr1" "virbr0" "br0" "br-vxlan" "eth0" ];
   networking.firewall.allowedTCPPorts = [ 
     2049 #NFSv4
     49152 #libvirt live migration direct connect
@@ -212,6 +306,7 @@ in
   ];
   networking.firewall.allowedUDPPorts = [
     8472 # k3s, flannel: required if using multi-node for inter-node networking
+    4789 # VXLAN
   ];
   system.stateVersion = "24.05"; # Did you read the comment?
 }

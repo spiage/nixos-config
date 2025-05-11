@@ -7,7 +7,34 @@
   imports = [ 
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix 
+    ../profiles/network/smb-server.nix
   ];
+
+  systemd.network = {
+    links."10-eth0".matchConfig.MACAddress = 
+      lib.concatStringsSep " " [  # Объединение через пробел
+        "74:56:3c:78:21:ad"   # Физический интерфейс
+        "00:15:5d:01:02:00"   # MAC Hyper-V
+      ];
+    
+    networks = {
+      "30-br0" = {
+        address = [ 
+          "192.168.1.2/24" 
+          # Для IPv6 (если нужно):
+          # "2001:db8::a7/64"
+        ];
+      };
+    };    
+  };
+
+  # Параметры VXLAN для a7
+  # vxlanConfig = {
+  #   localIP = "192.168.1.2";       # Физический IP a7
+  #   remoteIPs = [ "192.168.1.15" "192.168.1.18" ];  # IP i7 и q1
+  #   vxlanIP = "10.10.10.3";        # VXLAN-адрес a7
+  #   physicalInterface = "br0";  # Укажите ваш интерфейс (eno1, enp1s0 и т.д.)
+  # };
 
   boot.initrd.kernelModules = [ "amdgpu" "coretemp" "hv_vmbus" "hv_storvsc" ];
 
@@ -71,41 +98,34 @@
   };
   hardware.sensor.iio.enable = true;
 
-  # Физический интерфейс (enp14s0) → eth0
-  services.udev.extraRules = ''
-    SUBSYSTEM=="net", ACTION=="add", 
-    ATTR{address}=="74:56:3c:78:21:ad",  # MAC физического интерфейса
-    NAME="eth0"
-    SYMLINK+="enp14s0-physical"
-    
-    SUBSYSTEM=="net", ACTION=="add", 
-    ATTR{address}=="00:15:5d:01:02:00",  # MAC Hyper-V интерфейса
-    NAME="eth0"
-    SYMLINK+="hv-eth0-virtual"
-  '';
+  # # Физический интерфейс (enp14s0) → eth0
+  # services.udev.extraRules = ''
+  #   SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="74:56:3c:78:21:ad", NAME="eth0" SYMLINK+="enp14s0-physical"
+  #   SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:15:5d:01:02:00", NAME="eth0" SYMLINK+="hv-eth0-virtual"
+  # '';
 
-  systemd.network.networks."main-eth" = {
-    matchConfig.Name = "eth0";
-    address = ["192.168.1.2/24"];
-    gateway = ["192.168.1.1"];
-    dns = ["192.168.1.1"];
-    networkConfig = {
-      DHCP = "no";
-      Domains = "k8s.local";
-    };
-  };
-  networking.useDHCP = false;
+#   systemd.network.networks."main-eth" = {
+#     matchConfig.Name = "eth0";
+#     address = ["192.168.1.2/24"];
+#     gateway = ["192.168.1.1"];
+#     dns = ["192.168.1.1"];
+#     networkConfig = {
+#       DHCP = "no";
+#       Domains = "k8s.local";
+#     };
+#   };
+#   # networking.useDHCP = false;
   
-  networking = {
-    usePredictableInterfaceNames = false; 
-#    bridges.br0.interfaces = [ "enp14s0" ];
-    bridges.br0.interfaces = [ "eth0" ];
-    # useDHCP = false;
-#    interfaces.enp14s0.useDHCP = false;
-    interfaces.eth0.useDHCP = false;
-    interfaces.br0.useDHCP = true;
-  };
-  networking.dhcpcd.extraConfig = "noipv6rs"; 
+#   networking = {
+#     usePredictableInterfaceNames = false; 
+# #    bridges.br0.interfaces = [ "enp14s0" ];
+#     bridges.br0.interfaces = [ "eth0" ];
+#     # useDHCP = false;
+# #    interfaces.enp14s0.useDHCP = false;
+#     interfaces.eth0.useDHCP = false;
+#     interfaces.br0.useDHCP = true;
+#   };
+#   networking.dhcpcd.extraConfig = "noipv6rs"; 
   # networking.bridges.vmbr0.interfaces = [ "enp14s0" ];
   # networking.interfaces.vmbr0.useDHCP = lib.mkDefault true;
 
@@ -248,13 +268,64 @@
     in ["${automount_opts},credentials=/etc/nixos/smb-secrets,uid=1000,gid=100"];
   };
 
-  services.k3s = {
+  # services.k3s = {
+  #   enable = true;
+  #   role = "server";
+  #   token = "Ee1ySKGVulT61yhl2hRDgXVP33OC8R0P"; #tr -dc A-Za-z0-9 </dev/urandom | head -c 32; echo
+  #   clusterInit = true;
+  #   extraFlags = "--write-kubeconfig-mode=644";
+  # };
+
+  # Проблема - русские имена файлов не поддерживаются в винде :(
+  # services.nfs.server = {
+  #   enable = true;
+  #   exports = ''
+  #     /mnt/store/zstd19 192.168.1.0/24(rw,async,no_subtree_check,insecure)
+  #   '';
+  # };
+  # networking.firewall.allowedTCPPorts = [ 2049 ]; # открыть порт NFS
+
+  services.samba = {
     enable = true;
-    role = "server";
-    token = "Ee1ySKGVulT61yhl2hRDgXVP33OC8R0P"; #tr -dc A-Za-z0-9 </dev/urandom | head -c 32; echo
-    clusterInit = true;
-    extraFlags = "--write-kubeconfig-mode=644";
+    openFirewall = true;
+    settings = {
+      global = {
+        security = "auto"; # Анонимный доступ
+        "map to guest" = "Bad User";
+        "guest account" = "nobody";
+        "unix extensions" = "no"; # Для совместимости с Windows
+      };
+
+      # homelab = {
+      #   path = "/mnt/store/zstd19";
+        # "create mask" = "0666";
+        # "directory mask" = "0777";
+        # "force user" = "nobody";
+        # "force group" = "nogroup";
+      "public" = {
+        "path" = "/mnt/store/zstd19";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "force user" = "username";
+        "force group" = "groupname";
+      };
+    };
   };
+
+# systemd.services.zfs-mount = {
+#   serviceConfig.ExecStartPost = [
+#     "+${pkgs.coreutils}/bin/chmod -R 777 /mnt/store/zstd19"
+#     "+${pkgs.acl}/bin/setfacl -R -m u:nobody:rwx /mnt/store/zstd19"
+#   ];
+# };
+
+  # # Автоматически устанавливать права на ZFS-датасет
+  # systemd.services.zfs-mount = {
+  #   serviceConfig.ExecStartPost = "+${pkgs.coreutils}/bin/chmod -R 777 /mnt/store/zstd19";
+  # };
 
   services.openssh = {
     enable = true;

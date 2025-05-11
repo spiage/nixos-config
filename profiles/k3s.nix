@@ -16,7 +16,7 @@
     serverAddr = "https://192.168.1.2:6443";
     extraFlags = "--write-kubeconfig-mode=644";
   };  
-  networking.firewall.enable = true;
+  # networking.firewall.enable = true;
   networking.firewall.allowPing = true;
   networking.firewall.allowedTCPPorts = [ 
     2049 #NFSv4
