@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
 
   networking.hostName = "j4"; # Define your hostname.
@@ -8,6 +9,22 @@
     ../profiles/video/nvidia-simple.nix
     ../profiles/common.nix 
   ];
+  systemd.network = {
+    links."10-eth0".matchConfig.MACAddress = 
+      lib.concatStringsSep " " [  # Объединение через пробел
+        "f4:a4:54:87:66:ef"   # Физический интерфейс
+      ];
+    
+    networks = {
+      "30-br0" = {
+        address = [ 
+          "192.168.1.16/16" 
+          # Для IPv6 (если нужно):
+          # "2001:db8::a7/64"
+        ];
+      };
+    };    
+  };
 
   boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "pata_jmicron" "nvme" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
@@ -123,7 +140,7 @@
     openFirewall = true;
   };
 
-  networking.firewall.enable = true;
+  # networking.firewall.enable = true;
   networking.firewall.allowPing = true;
   networking.firewall.extraCommands = ''iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns'';
   networking.firewall.allowedTCPPorts = [ 7946 ];

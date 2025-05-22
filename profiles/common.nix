@@ -47,6 +47,8 @@ in
     # ../profiles/ceph.nix
   ];
 
+  vxlan.enable = true;
+
   # vxlanConfig.enable = true;
 
   # networking.bridges."br-vxlan".interfaces = [];
@@ -247,6 +249,14 @@ in
     ''--iptables=false --ip-masq=false -b br0'';
 
   environment.systemPackages = with pkgs; [
+
+    cloud-utils
+    guestfs-tools
+    cdrkit
+
+    libguestfs-with-appliance
+    # libguestfs # Tools for accessing and modifying virtual machine disk images:
+    # guestfish guestfsd guestmount guestunmount libguestfs-test-tool virt-copy-in virt-copy-out virt-rescue virt-tar-in virt-tar-out
 
     tcpdump
     iperf3

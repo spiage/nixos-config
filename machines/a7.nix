@@ -20,7 +20,7 @@
     networks = {
       "30-br0" = {
         address = [ 
-          "192.168.1.2/24" 
+          "192.168.1.2/16" 
           # Для IPv6 (если нужно):
           # "2001:db8::a7/64"
         ];
@@ -394,6 +394,10 @@
   services.flatpak.enable = true;
   programs.nix-ld.enable = true;
   environment.systemPackages = with pkgs; [
+    # Временно отключил, в hyper-v не нужно
+    # libreoffice-qt6-fresh
+    # (pkgs.zoom-us.override { xdgDesktopPortalSupport = false; }) # zoom-us # zoom.us video conferencing application
+    # telegram-desktop
 
     etcd
     
@@ -512,20 +516,18 @@
 
     # firefox
 
-    microsoft-edge
+    # microsoft-edge #error: microsoft-edge has been removed due to lack of maintenance in nixpkgs
     inputs.yandex-browser.packages.x86_64-linux.yandex-browser-stable  
     # inputs.ki-editor.packages.x86_64-linux.default
     # yandex-browser
     google-chrome
 
     # inputs.nixpkgs-unstable.legacyPackages.${system}.telegram-desktop  
-    telegram-desktop
 
     ansible # Radically simple IT automation
     # docker-compose # Docker CLI plugin to define and run multi-container applications with Docker
     # filezilla # Graphical FTP, FTPS and SFTP client
 
-    (pkgs.zoom-us.override { xdgDesktopPortalSupport = false; }) # zoom-us # zoom.us video conferencing application
     delve # debugger for the Go programming language
     gdlv # GUI frontend for Delve
     go # The Go Programming language
@@ -547,7 +549,6 @@
     # micro
     # helix
     # st
-    libreoffice-qt6-fresh
     # vmware-horizon-client
     # inputs.vmwarehorizonclient.legacyPackages.x86_64-linux.vmware-horizon-client
     # input.vmwarehorizonclient.legacyPackages.x86_64-linux.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "vmware-horizon-client" ]
@@ -607,9 +608,9 @@
     #libsForQt5.kpat # inputs.kde2nix.packages.x86_64-linux.kpat
     # kdePackages.discover # discover #fail with plasma 6.0.4
     kdePackages.konsole
-    kdePackages.kmail
-    kdePackages.kontact
-    kdePackages.merkuro
+    # kdePackages.kmail
+    # kdePackages.kontact
+    # kdePackages.merkuro
     
     # apt
     # dpkg

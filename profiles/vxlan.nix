@@ -18,9 +18,9 @@ in {
           Kind = "vxlan";
         };
         vxlanConfig = {
-          Id = vxlanId;
-          Remote = "239.1.1.1";
-          Port = vxlanPort;
+          VNI = vxlanId;
+          Group = "239.1.1.1";
+          DestinationPort = vxlanPort;
           GroupPolicyExtension = true;
         };
       };
@@ -58,12 +58,14 @@ in {
     virtualisation.libvirtd = {
       enable = true;
       qemu = {
-        package = pkgs.qemu_kvm;
+        # package = pkgs.qemu_kvm; # есть в common
         runAsRoot = true;
         swtpm.enable = true;
       };
     };
 
     networking.firewall.allowedUDPPorts = [vxlanPort];
+    boot.kernelModules = [ "vxlan" "bridge" ];
+    environment.systemPackages = [ pkgs.bridge-utils pkgs.tcpdump ];
   };
 }

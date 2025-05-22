@@ -41,6 +41,7 @@
     ../profiles/video/nvidia-simple.nix
     ../profiles/common.nix 
     ../profiles/k3s.nix 
+    # ../profiles/libvirt-vms.nix 
   ];
   systemd.network = {
     links."10-eth0".matchConfig.MACAddress = 
@@ -51,13 +52,32 @@
     networks = {
       "30-br0" = {
         address = [ 
-          "192.168.1.15/24" 
+          "192.168.1.15/16" 
           # Для IPv6 (если нужно):
           # "2001:db8::a7/64"
         ];
       };
     };    
   };
+
+  # virtualMachines = {
+  #   "webserver" = {
+  #     user = "spiage";
+  #     sshKey = ./keys/webserver-key.pub;
+  #     cpus = 3;
+  #     memory = 5120; # 5GB
+  #     diskSize = 7;
+  #   };
+
+  #   "database" = {
+  #     user = "spiage";
+  #     sshKey = ./keys/db-key.pub;
+  #     cpus = 2;
+  #     memory = 4096;
+  #     diskSize = 15;
+  #   };
+  # };
+
   # vxlanConfig = {
   #   localIP = "192.168.1.15";       # Физический IP a7
   #   remoteIPs = [ "192.168.1.2" "192.168.1.18" ];  # IP i7 и q1

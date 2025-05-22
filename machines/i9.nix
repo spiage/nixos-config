@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
 
   networking.hostName = "i9"; # Define your hostname.
@@ -8,6 +8,22 @@
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix 
   ];
+  systemd.network = {
+    links."10-eth0".matchConfig.MACAddress = 
+      lib.concatStringsSep " " [  # Объединение через пробел
+        "2c:f0:5d:29:f6:01"   # Физический интерфейс
+      ];
+    
+    networks = {
+      "30-br0" = {
+        address = [ 
+          "192.168.1.201/16" 
+          # Для IPv6 (если нужно):
+          # "2001:db8::a7/64"
+        ];
+      };
+    };    
+  };
 
   services.xserver.videoDrivers = [ "nvidia" ];
 
