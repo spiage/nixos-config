@@ -36,14 +36,24 @@
   #   physicalInterface = "br0";  # Укажите ваш интерфейс (eno1, enp1s0 и т.д.)
   # };
 
-  boot.initrd.kernelModules = [ "amdgpu" "coretemp" "hv_vmbus" "hv_storvsc" ];
-
+#  boot.initrd.kernelModules = [ "amdgpu" "coretemp" "hv_vmbus" "hv_storvsc" ];
+  boot.initrd.kernelModules = [ "amdgpu" "coretemp" ];
+  boot.kernelParams = [
+    "video=DP-1:1920x1080@60"
+    "video=HDMI-A-1:3840x2160@60"
+    "mitigations=off" 
+    "preempt=full" 
+    "nowatchdog" 
+    "kernel.nmi_watchdog=0"
+  ];
   boot.initrd.systemd.enable = true;
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "uas" "usbhid" "sd_mod" ];
   boot.supportedFilesystems = [ "ntfs" "btrfs" "ext4" "xfs" "zfs" ];
-  boot.kernelModules = [ "kvm-amd" "bfq" "mt7921e" "k10temp" "hv_vmbus" "hv_storvsc" "hv_netvsc" "hv_utils" "hv_balloon" ];
-  boot.kernelParams = [ "mitigations=off" "preempt=full" "nowatchdog" "kernel.nmi_watchdog=0" "video=hyperv_fb:800x600" ];
-  boot.kernel.sysctl."vm.overcommit_memory" = "1"; # https://github.com/NixOS/nix/issues/421 # - avoid a problem with `nix-env -i` running out of memory
+  boot.kernelModules = [ "kvm-amd" "bfq" "mt7921e" "k10temp" ];
+  # boot.kernelParams = [ "mitigations=off" "preempt=full" "nowatchdog" "kernel.nmi_watchdog=0" ];
+  # boot.kernelModules = [ "kvm-amd" "bfq" "mt7921e" "k10temp" "hv_vmbus" "hv_storvsc" "hv_netvsc" "hv_utils" "hv_balloon" ];
+  # boot.kernelParams = [ "mitigations=off" "preempt=full" "nowatchdog" "kernel.nmi_watchdog=0" "video=hyperv_fb:800x600" ];
+  # boot.kernel.sysctl."vm.overcommit_memory" = "1"; # https://github.com/NixOS/nix/issues/421 # - avoid a problem with `nix-env -i` running out of memory
   boot.zfs.extraPools = [ "store_pool" ];
   services.zfs.autoScrub.enable = true;
 
@@ -85,7 +95,7 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   #hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  virtualisation.hypervGuest.enable = true;
+#  virtualisation.hypervGuest.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
@@ -138,7 +148,7 @@
   services.xserver.enable = true;
   services.xserver.xkb.layout = "us,ru";
   services.xserver.xkb.options = "grp:win_space_toggle";
-  # services.xserver.videoDrivers = [ "amdgpu" ];
+  services.xserver.videoDrivers = [ "amdgpu" ];
   # services.xserver.desktopManager.plasma5.enable = true;
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "plasmax11";
@@ -147,8 +157,8 @@
   services.displayManager.sddm.wayland.enable = false;
   # services.displayManager.sddm.wayland.enable = true;
   services.displayManager.sddm.settings.General.DisplayServer = "x11-user";
-#  services.displayManager.autoLogin.enable = true;
-#  services.displayManager.autoLogin.user = "spiage";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "spiage";
 
   services.xrdp.enable = true;
   services.xrdp.defaultWindowManager = "startplasma-x11";
@@ -240,9 +250,9 @@
   # #   ''--iptables=false --ip-masq=false -b br0'';
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.ks = {
+  users.users.spiage = {
     isNormalUser = true;
-    description = "ks";
+    description = "spiage";
     extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "vboxusers" "video" "docker" "podman" ];
   };
 
@@ -397,7 +407,7 @@
     # Временно отключил, в hyper-v не нужно
     # libreoffice-qt6-fresh
     # (pkgs.zoom-us.override { xdgDesktopPortalSupport = false; }) # zoom-us # zoom.us video conferencing application
-    # telegram-desktop
+    telegram-desktop
 
     etcd
     
@@ -510,7 +520,7 @@
 
     # dbeaver-bin # Free multi-platform database tool for developers, SQL programmers, database administrators and analysts. Supports all popular databases: MySQL, PostgreSQL, MariaDB, SQLite, Oracle, DB2, SQL Server, Sybase, MS Access, Teradata, Firebird, Derby, etc.
 
-    # thunderbird-latest # 132
+    thunderbird-latest # 132
     # thunderbird # 128ESR
     # birdtray
 
