@@ -1,4 +1,11 @@
 { config, pkgs, inputs, lib, ... }:
+# let
+#   # Импортируем весь старый nixpkgs
+#   oldPkgs = import (builtins.fetchTarball {
+#     url = "https://github.com/NixOS/nixpkgs/archive/af3da081316501d9744dbb4d988fafcdda2bf6cb.tar.gz";
+#     sha256 = "1jgir94k52rin73kmk5hingdfsc0780b7qk3rl8lqnasalkd2ics"; # Замените на реальный sha256
+#   }) {};
+#   in
 {
 
   networking.hostName = "a7"; # Define your hostname.
@@ -39,8 +46,8 @@
 #  boot.initrd.kernelModules = [ "amdgpu" "coretemp" "hv_vmbus" "hv_storvsc" ];
   boot.initrd.kernelModules = [ "amdgpu" "coretemp" ];
   boot.kernelParams = [
-    "video=DP-1:1920x1080@60"
-    "video=HDMI-A-1:3840x2160@60"
+    # "video=DP-1:1920x1080@60"
+    # "video=HDMI-A-1:3840x2160@60"
     "mitigations=off" 
     "preempt=full" 
     "nowatchdog" 
@@ -148,7 +155,8 @@
   services.xserver.enable = true;
   services.xserver.xkb.layout = "us,ru";
   services.xserver.xkb.options = "grp:win_space_toggle";
-  services.xserver.videoDrivers = [ "amdgpu" ];
+  services.xserver.videoDrivers = [ "modesetting" ];
+  # services.xserver.videoDrivers = [ "modesetting" "amdgpu" ];
   # services.xserver.desktopManager.plasma5.enable = true;
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "plasmax11";
@@ -157,13 +165,57 @@
   services.displayManager.sddm.wayland.enable = false;
   # services.displayManager.sddm.wayland.enable = true;
   services.displayManager.sddm.settings.General.DisplayServer = "x11-user";
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "spiage";
+  # services.displayManager.autoLogin.enable = true;
+  # services.displayManager.autoLogin.user = "spiage";
 
-  services.xrdp.enable = true;
-  services.xrdp.defaultWindowManager = "startplasma-x11";
-  services.xrdp.openFirewall = true;
-  services.xrdp.audio.enable = true;
+  # services.xrdp.enable = true;
+  # services.xrdp.defaultWindowManager = "startplasma-x11";
+  # # services.xrdp.defaultWindowManager = "xfce4-session";
+  # services.xrdp.openFirewall = true;
+  # services.xrdp.audio.enable = true;
+  # services.xrdp = {
+  #   enable = true;
+  #   defaultWindowManager = "startplasma-x11";
+  #   openFirewall = true;
+  #   audio.enable = true;
+  #   package = oldPkgs.xrdp; 
+  #   # extraConfDirCommands = let
+  #   #   xorgConf = pkgs.writeText "xrdp-xorg.conf" ''
+  #   #     Section "ServerFlags"
+  #   #       Option "AutoAddGPU" "on"
+  #   #       Option "Debug" "dmabuf_capable"
+  #   #       Option "DRI" "3"
+  #   #       Option "AllowEmptyInput" "off"
+  #   #     EndSection
+
+  #   #     Section "Device"
+  #   #       Identifier "Video Card"
+  #   #       Driver "modesetting"
+  #   #       Option "kmsdev" "/dev/dri/card0"
+  #   #     EndSection
+  #   #   '';
+  #   # in ''
+  #   #   # Исправляем deprecated --replace
+  #   #   substituteInPlace $out/xrdp.ini \
+  #   #     --replace-quiet 'LogLevel=INFO' 'LogLevel=DEBUG' \
+  #   #     --replace-quiet 'EnableSyslog=false' 'EnableSyslog=true'
+      
+  #   #   substituteInPlace $out/sesman.ini \
+  #   #     --replace-quiet 'LogLevel=INFO' 'LogLevel=DEBUG' \
+  #   #     --replace-quiet 'EnableSyslog=0' 'EnableSyslog=1'
+
+  #   #   # Копируем новый xorg.conf вместо редактирования несуществующего
+  #   #   cp ${xorgConf} $out/xorg.conf
+  #   # '';
+  # };
+
+  environment.etc."polkit-1/rules.d/02-allow-dri.rules".text = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id == "org.freedesktop.login1.acquire-device") {
+        return polkit.Result.YES;
+      }
+    });
+  '';
 
   services.libinput.enable = true;
   # services.fwupd.enable = true;
@@ -250,11 +302,16 @@
   # #   ''--iptables=false --ip-masq=false -b br0'';
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.spiage = {
-    isNormalUser = true;
-    description = "spiage";
-    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "vboxusers" "video" "docker" "podman" ];
-  };
+  # users.users.ks = {
+  #   isNormalUser = true;
+  #   description = "ks";
+  #   extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "libvirt" "vboxusers" "video" "docker" "podman" "tsusers" ];
+  # };
+  # users.users.ksn = {
+  #   isNormalUser = true;
+  #   description = "ksn";
+  #   extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "libvirt" "vboxusers" "video" "docker" "podman" "tsusers" ];
+  # };
 
   nixpkgs.config.allowUnfree = true;
 
@@ -320,7 +377,7 @@
     settings = {
       X11Forwarding = true;        # Аналог X11Forwarding yes
       X11DisplayOffset = 10;       # Соответствует X11DisplayOffset 10
-      X11UseLocalhost = true;      # Аналог X11UseLocalhost yes
+      X11UseLocalhost = false;      # Аналог X11UseLocalhost yes
     };
   };
   systemd.services.sshd = {
@@ -371,6 +428,7 @@
   #   "yandex-browser-stable-24.6.1.852-1"
   # ];  
   # services.tailscale.enable = true;
+
   programs.partition-manager.enable = true;
   services.dbus.packages = [ pkgs.kdePackages.kpmcore ];
   # xdg.portal = {

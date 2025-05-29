@@ -192,7 +192,7 @@ in
   users.users.spiage = {
     isNormalUser = true; 
     description = "spiage";
-    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "libvirt" "vboxusers" "video" "docker" "podman" ];
+    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "libvirt" "vboxusers" "video" "docker" "podman" "tsusers" ];
   };
 
   programs.traceroute.enable = true;

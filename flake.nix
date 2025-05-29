@@ -19,6 +19,11 @@
   inputs.vscode-server.url = "github:nix-community/nixos-vscode-server";
   inputs.vscode-server.inputs.nixpkgs.follows = "nixpkgs";
   # inputs.nix-flatpak.url = "github:gmodena/nix-flatpak/?ref=v0.6.0";
+  # inputs.nixpkgs-xrdp = {
+  #   url = "github:NixOS/nixpkgs/af3da081316501d9744dbb4d988fafcdda2bf6cb";
+  #   flake = false;
+  # };
+  inputs.nixpkgs-old.url = "github:NixOS/nixpkgs/af3da081316501d9744dbb4d988fafcdda2bf6cb";
   outputs = { 
     self
   # , determinate
@@ -33,10 +38,33 @@
   # , nix-snapd
   , vscode-server
   # , nix-flatpak
+  # , nixpkgs-xrdp
+  , nixpkgs-old
   }@inputs: {
     nixosConfigurations.a7 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [ 
+
+        ({ config, pkgs, ... }: {
+          nixpkgs.overlays = [
+            (final: prev: {
+              # Импортируем только xrdp из старого nixpkgs
+              xrdp = (import inputs.nixpkgs-old {
+                system = "x86_64-linux";
+                config.allowUnfree = true;
+              }).xrdp;
+            })
+          ];
+
+          services.xrdp = {
+            enable = true;
+            package = pkgs.xrdp;  # Теперь это старая версия
+            defaultWindowManager = "startplasma-x11";
+            openFirewall = true;
+            audio.enable = true;
+          };
+        })
+
         machines/a7.nix
         # nix-flatpak.nixosModules.nix-flatpak
         # determinate.nixosModules.default
@@ -72,6 +100,39 @@
         ({ config, pkgs, ... }: {
           services.vscode-server.enable = true;
         })
+
+        # # Модуль для переопределения xrdp
+        # ({ pkgs, lib, ... }: {
+        #   # Импортируем xrdp из старого коммита
+        #   # xrdp-old = (import nixpkgs-xrdp {
+        #   #   inherit (pkgs) system;
+        #   #   config.allowUnfree = true;
+        #   # }).xrdp;
+
+        #   # Переопределяем пакет в системе
+        #   nixpkgs.overlays = [
+        #     (final: prev: {
+        #       xrdp = nixpkgs-xrdp.legacyPackages.${prev.system}.xrdp;
+        #       xorgxrdp = nixpkgs-xrdp.legacyPackages.${prev.system}.xorgxrdp;
+        #     })
+        #   ];
+
+        #   # Настройка сервиса
+        #   services.xrdp = {
+        #     enable = true;
+        #     package = pkgs.xrdp;  # Используем переопределённую версию
+            
+        #     # Дополнительные настройки
+        #     defaultWindowManager = "startplasma-x11";
+        #     openFirewall = true;
+        #   };
+        # })
+  # services.xrdp.enable = true;
+  # services.xrdp.defaultWindowManager = "startplasma-x11";
+  # # services.xrdp.defaultWindowManager = "xfce4-session";
+  # services.xrdp.openFirewall = true;        
+
+
       ];
       specialArgs.inputs = inputs;
     };
