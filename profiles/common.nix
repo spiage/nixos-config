@@ -58,6 +58,7 @@ in
   # systemd.services.systemd-resolved.enable = false;
   environment.etc."resolv.conf".text = ''
     nameserver ${dnsServer}
+    nameserver 192.168.1.1
     search k8s.local
   '';  
   
