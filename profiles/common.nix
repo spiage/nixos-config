@@ -12,33 +12,37 @@ let
       builtins.attrValues zfsCompatibleKernelPackages
     )
   );
-  homeDomainName = "k8s.local";
-  kubeMasterIP = "192.168.1.2";
-  kubeMasterHostname = "a7.k8s.local";
   
-  # Функция для генерации настроек VXLAN в зависимости от хоста
-  # vxlanConfig = { localIP, remoteIPs, vxlanIP }: {
-  #   systemd.network.netdevs."10-vxlan0" = {
-  #     netdevConfig.Name = "vxlan0";
-  #     netdevConfig.Kind = "vxlan";
-  #     vxlanConfig = {
-  #       VNI = 100;
-  #       Local = localIP;
-  #       Remote = remoteIPs;
-  #       Port = 4789;
-  #     };
-  #   };
+  # Используем существующий домен k8s.local
+  homeDomain = "k8s.local";
+  
+  kubeMasterIP = "192.168.1.2";
+  kubeMasterHostname = "a7.${homeDomain}";
 
-  #   systemd.network.networks."10-br-vxlan" = {
-  #     matchConfig.Name = "br-vxlan";
-  #     networkConfig.Address = "${vxlanIP}/24";
-  #     networkConfig.DHCP = "no";
-  #     links = [ "vxlan0" ];
-  #   };
-  # };
+  # Общие хосты для всех машин
+  coreHosts = [
+    "${kubeMasterIP} ${kubeMasterHostname}"
+    "136.243.168.226 download.qt.io"
+    "192.168.122.60 u2004-01"
+    "192.168.1.2   a7 a7.${homeDomain}"
+    "192.168.1.201 i9 i9.${homeDomain}"
+    "192.168.1.15  i7 i7.${homeDomain}"
+    "192.168.1.16  j4 j4.${homeDomain}"
+    "192.168.1.18  q1 q1.${homeDomain}"
+  ];
+  
+  # Виртуальные машины (добавляются в extraHosts)
+  vmHosts = [
+    "192.168.1.111 gitlab-01 gitlab-01.${homeDomain}"
+    "192.168.1.110 grafana-01 grafana-01.${homeDomain}"
+  ];
+
+  dnsServer = if config.networking.hostName == "q1" 
+              then "127.0.0.1" 
+              else "192.168.1.18";
+
 in
 {
-
   time.timeZone = "Europe/Moscow";
 
   imports = [ 
@@ -48,12 +52,26 @@ in
   ];
 
   vxlan.enable = true;
+  
+  # Полное отключение systemd-resolved
+  services.resolved.enable = false;
+  # systemd.services.systemd-resolved.enable = false;
+  environment.etc."resolv.conf".text = ''
+    nameserver ${dnsServer}
+    search k8s.local
+  '';  
+  
+  # Удалить старый файл resolv.conf
+  # environment.etc."resolv.conf".enable = true;
+  # environment.etc."resolv.conf".text = "nameserver 192.168.1.1";
 
   # vxlanConfig.enable = true;
 
   # networking.bridges."br-vxlan".interfaces = [];
 
   # Общие настройки для всех хостов
+  networking.domain = homeDomain;
+  networking.search = [ homeDomain ];
   networking.useNetworkd = true; # Полный переход на systemd-networkd
   networking.useDHCP = false;
   systemd.network = {
@@ -92,27 +110,16 @@ in
         matchConfig.Name = "br0";
         networkConfig = {
           DHCP = "no";
-          DNS = "192.168.1.1";
-          Gateway = "192.168.1.1";
+          # DNS будет настроен индивидуально на каждом хосте
           ConfigureWithoutCarrier = true;
         };
-        address = [ 
-          # Переносим адреса из хостовых конфигов сюда
-        ];
+        # Шлюз и адрес перенесены в host-specific конфиги
       };
     };
   };
-  networking.extraHosts =
-    ''
-      ${kubeMasterIP} ${kubeMasterHostname}
-      136.243.168.226 download.qt.io
-      192.168.122.60 u2004-01
-      192.168.1.2   a7 a7.${homeDomainName}
-      192.168.1.201 i9 i9.${homeDomainName}
-      192.168.1.15  i7 i7.${homeDomainName}
-      192.168.1.16  j4 j4.${homeDomainName}
-      192.168.1.18  q1 q1.${homeDomainName}
-    '';
+
+  # Объединенные хосты: основные + VM
+  networking.extraHosts = lib.concatStringsSep "\n" (coreHosts ++ vmHosts);
 
   # zramSwap.enable = true;
   # zramSwap.memoryPercent = 100;
@@ -249,6 +256,8 @@ in
     ''--iptables=false --ip-masq=false -b br0'';
 
   environment.systemPackages = with pkgs; [
+
+    dig
 
     cloud-utils
     guestfs-tools

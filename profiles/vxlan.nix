@@ -2,7 +2,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  homeDomainName = "home.lan";
+  homeDomainName = "k8s.local";
   vxlanId = 42;
   vxlanPort = 4789;
   vxlanNetwork = "10.0.0.0/16";

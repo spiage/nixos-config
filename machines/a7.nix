@@ -1,11 +1,4 @@
 { config, pkgs, inputs, lib, ... }:
-# let
-#   # Импортируем весь старый nixpkgs
-#   oldPkgs = import (builtins.fetchTarball {
-#     url = "https://github.com/NixOS/nixpkgs/archive/af3da081316501d9744dbb4d988fafcdda2bf6cb.tar.gz";
-#     sha256 = "1jgir94k52rin73kmk5hingdfsc0780b7qk3rl8lqnasalkd2ics"; # Замените на реальный sha256
-#   }) {};
-#   in
 {
 
   networking.hostName = "a7"; # Define your hostname.
@@ -31,23 +24,18 @@
           # Для IPv6 (если нужно):
           # "2001:db8::a7/64"
         ];
+        networkConfig = {
+          DNS = "192.168.1.18";  # DNS-сервер q1
+          Gateway = "192.168.1.1";
+        };
       };
     };    
   };
 
-  # Параметры VXLAN для a7
-  # vxlanConfig = {
-  #   localIP = "192.168.1.2";       # Физический IP a7
-  #   remoteIPs = [ "192.168.1.15" "192.168.1.18" ];  # IP i7 и q1
-  #   vxlanIP = "10.10.10.3";        # VXLAN-адрес a7
-  #   physicalInterface = "br0";  # Укажите ваш интерфейс (eno1, enp1s0 и т.д.)
-  # };
-
-#  boot.initrd.kernelModules = [ "amdgpu" "coretemp" "hv_vmbus" "hv_storvsc" ];
   boot.initrd.kernelModules = [ "amdgpu" "coretemp" ];
   boot.kernelParams = [
-    # "video=DP-1:1920x1080@60"
-    # "video=HDMI-A-1:3840x2160@60"
+    "video=DP-1:1920x1080@60"
+    "video=HDMI-A-1:3840x2160@60"
     "mitigations=off" 
     "preempt=full" 
     "nowatchdog" 
@@ -57,13 +45,8 @@
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "uas" "usbhid" "sd_mod" ];
   boot.supportedFilesystems = [ "ntfs" "btrfs" "ext4" "xfs" "zfs" ];
   boot.kernelModules = [ "kvm-amd" "bfq" "mt7921e" "k10temp" ];
-  # boot.kernelParams = [ "mitigations=off" "preempt=full" "nowatchdog" "kernel.nmi_watchdog=0" ];
-  # boot.kernelModules = [ "kvm-amd" "bfq" "mt7921e" "k10temp" "hv_vmbus" "hv_storvsc" "hv_netvsc" "hv_utils" "hv_balloon" ];
-  # boot.kernelParams = [ "mitigations=off" "preempt=full" "nowatchdog" "kernel.nmi_watchdog=0" "video=hyperv_fb:800x600" ];
-  # boot.kernel.sysctl."vm.overcommit_memory" = "1"; # https://github.com/NixOS/nix/issues/421 # - avoid a problem with `nix-env -i` running out of memory
   boot.zfs.extraPools = [ "store_pool" ];
   services.zfs.autoScrub.enable = true;
-
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/26aceccc-68ac-40b5-9967-800602c65cc1";
@@ -92,14 +75,6 @@
   #   fsType = "nfs";
   # };
 
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-  # networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp11s0.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp12s0.useDHCP = lib.mkDefault true;
-
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   #hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
   virtualisation.hypervGuest.enable = true;
@@ -121,43 +96,10 @@
   #   SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:15:5d:01:02:00", NAME="eth0" SYMLINK+="hv-eth0-virtual"
   # '';
 
-#   systemd.network.networks."main-eth" = {
-#     matchConfig.Name = "eth0";
-#     address = ["192.168.1.2/24"];
-#     gateway = ["192.168.1.1"];
-#     dns = ["192.168.1.1"];
-#     networkConfig = {
-#       DHCP = "no";
-#       Domains = "k8s.local";
-#     };
-#   };
-#   # networking.useDHCP = false;
-  
-#   networking = {
-#     usePredictableInterfaceNames = false; 
-# #    bridges.br0.interfaces = [ "enp14s0" ];
-#     bridges.br0.interfaces = [ "eth0" ];
-#     # useDHCP = false;
-# #    interfaces.enp14s0.useDHCP = false;
-#     interfaces.eth0.useDHCP = false;
-#     interfaces.br0.useDHCP = true;
-#   };
-#   networking.dhcpcd.extraConfig = "noipv6rs"; 
-  # networking.bridges.vmbr0.interfaces = [ "enp14s0" ];
-  # networking.interfaces.vmbr0.useDHCP = lib.mkDefault true;
-
-  # В /etc/nixos/configuration.nix
-  # systemd.services.NetworkManager-wait-online.serviceConfig.ExecStart = [
-  #   ""
-  #   "${pkgs.networkmanager}/bin/nm-online -s -q --timeout=180"
-  # ];  
-
   services.xserver.enable = true;
   services.xserver.xkb.layout = "us,ru";
   services.xserver.xkb.options = "grp:win_space_toggle";
-  services.xserver.videoDrivers = [ "modesetting" ];
-  # services.xserver.videoDrivers = [ "modesetting" "amdgpu" ];
-  # services.xserver.desktopManager.plasma5.enable = true;
+  services.xserver.videoDrivers = [ "modesetting" "amdgpu" ];
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "plasmax11";
 
@@ -168,54 +110,12 @@
   # services.displayManager.autoLogin.enable = true;
   # services.displayManager.autoLogin.user = "spiage";
 
-  # services.xrdp.enable = true;
-  # services.xrdp.defaultWindowManager = "startplasma-x11";
-  # # services.xrdp.defaultWindowManager = "xfce4-session";
-  # services.xrdp.openFirewall = true;
-  # services.xrdp.audio.enable = true;
   # services.xrdp = {
   #   enable = true;
   #   defaultWindowManager = "startplasma-x11";
   #   openFirewall = true;
   #   audio.enable = true;
-  #   package = oldPkgs.xrdp; 
-  #   # extraConfDirCommands = let
-  #   #   xorgConf = pkgs.writeText "xrdp-xorg.conf" ''
-  #   #     Section "ServerFlags"
-  #   #       Option "AutoAddGPU" "on"
-  #   #       Option "Debug" "dmabuf_capable"
-  #   #       Option "DRI" "3"
-  #   #       Option "AllowEmptyInput" "off"
-  #   #     EndSection
-
-  #   #     Section "Device"
-  #   #       Identifier "Video Card"
-  #   #       Driver "modesetting"
-  #   #       Option "kmsdev" "/dev/dri/card0"
-  #   #     EndSection
-  #   #   '';
-  #   # in ''
-  #   #   # Исправляем deprecated --replace
-  #   #   substituteInPlace $out/xrdp.ini \
-  #   #     --replace-quiet 'LogLevel=INFO' 'LogLevel=DEBUG' \
-  #   #     --replace-quiet 'EnableSyslog=false' 'EnableSyslog=true'
-      
-  #   #   substituteInPlace $out/sesman.ini \
-  #   #     --replace-quiet 'LogLevel=INFO' 'LogLevel=DEBUG' \
-  #   #     --replace-quiet 'EnableSyslog=0' 'EnableSyslog=1'
-
-  #   #   # Копируем новый xorg.conf вместо редактирования несуществующего
-  #   #   cp ${xorgConf} $out/xorg.conf
-  #   # '';
   # };
-
-  environment.etc."polkit-1/rules.d/02-allow-dri.rules".text = ''
-    polkit.addRule(function(action, subject) {
-      if (action.id == "org.freedesktop.login1.acquire-device") {
-        return polkit.Result.YES;
-      }
-    });
-  '';
 
   services.libinput.enable = true;
   # services.fwupd.enable = true;
@@ -231,21 +131,15 @@
     mplus-outline-fonts.githubRelease
     dina-font
     proggyfonts
-    # nerdfonts
     terminus_font
     nerd-fonts.terminess-ttf
-    # terminus-nerdfont
     cascadia-code 
-    # fonts.packages = lib.mkIf cfg.enableDefaultPackages (
-    #   with pkgs;
-    #   [
     dejavu_fonts
     freefont_ttf
     gyre-fonts # TrueType substitutes for standard PostScript fonts
     liberation_ttf
     unifont
     noto-fonts-color-emoji
-      # ]
   ];
   
   #scanner
@@ -276,15 +170,8 @@
 
   virtualisation.libvirtd.allowedBridges = [ "virbr1" "virbr0" "br0" ];
   programs.virt-manager.enable = true;
-  # virtualisation.xen.enable = lib.mkForce false;
 
-  # networking.nftables.enable = true; # - Incus on NixOS is unsupported using iptables. Set `networking.nftables.enable = true;`
-  # networking.firewall.trustedInterfaces = [ "incusbr0" ];
   virtualisation = {
-    # incus = {
-    #   enable = true;
-    #   ui.enable = true;
-    # };
     podman = {
       enable = true;
       dockerCompat = true;
@@ -301,18 +188,6 @@
   # # virtualisation.docker.extraOptions =
   # #   ''--iptables=false --ip-masq=false -b br0'';
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  # users.users.ks = {
-  #   isNormalUser = true;
-  #   description = "ks";
-  #   extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "libvirt" "vboxusers" "video" "docker" "podman" "tsusers" ];
-  # };
-  # users.users.ksn = {
-  #   isNormalUser = true;
-  #   description = "ksn";
-  #   extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "libvirt" "vboxusers" "video" "docker" "podman" "tsusers" ];
-  # };
-
   nixpkgs.config.allowUnfree = true;
 
   programs.kdeconnect.enable = true;
@@ -320,7 +195,6 @@
   programs.zsh.enable = true;
   programs.starship.enable = true;
   programs.starship.presets = [ "nerd-font-symbols" ];
-
 
   fileSystems."/mnt/smb_pub" = {
     device = "//j4/Public";
@@ -389,76 +263,13 @@
     #   After = "network.target";
     # };
   };
-  # services.cockpit = {
-  #   enable = true;
-  #   # Отключите TLS, если используете локальную сеть (небезопасно для интернета!)
-  #   settings = {
-  #     WebService = {
-  #       AllowUnencrypted = true;  # Только для доверенных сетей!
-  #       Origins = lib.mkForce "http://a7 https://a7:9090";
-  #       ProtocolHeader = lib.mkForce "X-Forwarded-Proto";
-  #     };
-  #   };
-  #   openFirewall = true;
-  # };  
-  # nixpkgs.overlays = [ (final: prev: {
-  #   pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [ (pyfinal: pyprev: {
-  #     afdko = pyprev.afdko.overridePythonAttrs (oldAttrs: {
-  #       doCheck = false; #test hanged
-  #       doInstallCheck = false;
-  #       dontCheck = true;
-  #     });
-  #   }) ];
-  # }) ];
-  # nixpkgs.overlays = [ 
-  #   (
-  #     final: prev: { 
-  #       yandex-browser = prev.yandex-browser.overrideAttrs (_: rec { 
-  #         pname = "yandex-browser-stable"; #yandex-browser-stable_24.6.1.852-1_amd64.deb   
-  #         version = "24.6.1.852-1";
-  #         src = prev.fetchurl {
-  #           url = "http://repo.yandex.ru/yandex-browser/deb/pool/main/y/${pname}/${pname}_${version}_amd64.deb";
-  #           hash = "sha256-7G2AIqV7pCCWbN2SKzcqM/OES6EDqHQKzrJTc+GXWeI=";
-  #         };
-  #       });
-  #     }
-  #   )
-  # ];  
-  # nixpkgs.config.permittedInsecurePackages = [
-  #   "yandex-browser-stable-24.6.1.852-1"
-  # ];  
-  # services.tailscale.enable = true;
 
   programs.partition-manager.enable = true;
   services.dbus.packages = [ pkgs.kdePackages.kpmcore ];
-  # xdg.portal = {
-  #   enable = true;
-  #   extraPortals = [ 
-  #     pkgs.kdePackages.xdg-desktop-portal-kde 
-  #   ];
-  # };    
   
   services.gvfs.enable = true; # Browsing samba shares with GVFS
   # networking.firewall.extraCommands = ''iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns'';
 
-  # services.mongodb.enable = true;
-  # vmwarehorizonclient.legacyPackages.x86_64-linux.nixpkgs.config.allowUnfree = true;
-  # nixpkgs.overlays = [
-  #   ( 
-  #     final: prev: { 
-  #       vhc = import (inputs.vmwarehorizonclient) { system = "x86_64-linux"; config.allowUnfree = true; }; 
-  #     } 
-  #   )
-  # ];
-
-  # services.cockpit.enable = true;
-
-  # services.rustdesk-server.enable = true;
-  # services.rustdesk-server.openFirewall = true;
-  programs.obs-studio = {
-    enable = true;
-  };
-  # virtualisation.multipass.enable = true;
   services.flatpak.enable = true;
   programs.nix-ld.enable = true;
   environment.systemPackages = with pkgs; [
@@ -731,8 +542,6 @@
     helvum
     qpwgraph
   ];
-
-
 
   system.stateVersion = lib.mkForce "23.05"; # Did you read the comment?
 

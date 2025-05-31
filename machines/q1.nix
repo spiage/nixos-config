@@ -1,4 +1,5 @@
-{ lib, ... }:
+{ config, lib, ... }:
+
 {
   
   networking.hostName = "q1"; # Define your hostname.
@@ -8,27 +9,55 @@
     ../profiles/boot/systemd-boot.nix
     ../profiles/video/nvidia-simple.nix
     ../profiles/network/ntp-server-ru.nix
+    ../profiles/network/dnsmasq.nix
     ../profiles/common.nix 
     ../profiles/k3s.nix 
   ];
 
-  systemd.network = {
-    links."10-eth0".matchConfig.MACAddress = 
-      lib.concatStringsSep " " [  # Объединение через пробел
-        "20:7c:14:f4:21:34"   # Физический интерфейс
-      ];
+  profiles.networking.dns-dhcp-server = {
+    enable = true;
+    forwarders = [
+      "192.168.1.1"    # Локальный роутер
+      "1.1.1.1"        # Cloudflare Primary
+      "8.8.8.8"        # Google Primary
+      "9.9.9.9"        # Quad9 (резервный)
+    ];
     
-    networks = {
-      "30-br0" = {
-        address = [ 
-          "192.168.1.18/16" 
-          # Для IPv6 (если нужно):
-          # "2001:db8::a7/64"
-        ];
-      };
-    };    
+    staticHosts = [
+      # Основные хосты
+      { mac = "20:7c:14:f4:21:34"; ip = "192.168.1.18"; name = "q1"; description = "core"; }
+      { mac = "00:15:5d:01:02:00"; ip = "192.168.1.2"; name = "a7"; description = "core"; }
+      { mac = "2c:f0:5d:29:f6:01"; ip = "192.168.1.201"; name = "i9"; description = "core"; }
+      { mac = "a8:42:a1:ff:eb:e3"; ip = "192.168.1.15"; name = "i7"; description = "core"; }
+      { mac = "f4:a4:54:87:66:ef"; ip = "192.168.1.16"; name = "j4"; description = "core"; }
+      { mac = "74:56:3c:78:21:ad"; ip = "192.168.1.11"; name = "w11"; description = "core"; }
+      # Виртуальные машины
+      { mac = "52:54:00:73:ea:e9"; ip = "192.168.1.110"; name = "grafana-01"; description = "vm"; }
+      # { mac = "52:54:00:12:34:56"; ip = "192.168.1.111"; name = "grafana-01"; description = "vm"; }
+      
+      # Дополнительные устройства
+      # { mac = "c8:09:a8:11:99:be"; ip = "192.168.1.123"; name = "nas"; }
+      # { mac = "a8:a1:59:ee:3b:ab"; ip = "192.168.1.124"; name = "iot-gateway"; }
+    ];
   };
 
+  # DNS для самого q1
+  networking.nameservers = [ 
+    "127.0.0.1"    # Локальный Knot DNS
+    "192.168.1.1"  # Роутер (резерв)
+  ];
+
+  # Конфигурация бриджа (остается без изменений)
+  systemd.network = {
+    links."10-eth0".matchConfig.MACAddress = "20:7c:14:f4:21:34";
+    networks."30-br0" = {
+      address = [ "192.168.1.18/16" ];
+      networkConfig = {
+        DNS = "127.0.0.1";    # Локальный DNS-сервер
+        Gateway = "192.168.1.1";
+      };
+    };
+  };
   # services.ntp-ru.enable = true;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" ];
