@@ -1,1 +1,8 @@
-cd /home/spiage/repos/spiage/nixos-config/ && git pull && nix flake update && sudo nixos-rebuild -v --keep-going --keep-failed switch --flake . && nix profile diff-closures --profile /nix/var/nix/profiles/system && nvd diff /run/booted-system /run/current-system
+while true
+do
+date
+nix flake update && nixos-rebuild -v --keep-going --keep-failed build --flake . && nix profile diff-closures --profile /nix/var/nix/profiles/system && nvd diff /run/current-system ./result
+date
+df -i / && df -h /
+sleep 600
+done

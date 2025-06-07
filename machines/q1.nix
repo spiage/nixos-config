@@ -32,8 +32,10 @@
       { mac = "f4:a4:54:87:66:ef"; ip = "192.168.1.16"; name = "j4"; description = "core"; }
       { mac = "74:56:3c:78:21:ad"; ip = "192.168.1.11"; name = "w11"; description = "core"; }
       # Виртуальные машины
+      { mac = "52:54:00:63:03:64"; ip = "192.168.1.101"; name = "root-xfs-ubuntu-2024"; description = "vm"; }
       { mac = "52:54:00:73:ea:e9"; ip = "192.168.1.110"; name = "grafana-01"; description = "vm"; }
-      # { mac = "52:54:00:12:34:56"; ip = "192.168.1.111"; name = "grafana-01"; description = "vm"; }
+      { mac = "52:54:00:f5:65:bc"; ip = "192.168.1.111"; name = "gitlab-01"; description = "vm"; }
+      { mac = "52:54:00:30:f9:1a"; ip = "192.168.1.112"; name = "prometheus-01"; description = "vm"; }
       
       # Дополнительные устройства
       # { mac = "c8:09:a8:11:99:be"; ip = "192.168.1.123"; name = "nas"; }

@@ -51,6 +51,9 @@ in
     # ../profiles/ceph.nix
   ];
 
+  services.prometheus.exporters.node.enable = true;
+  services.prometheus.exporters.node.port = 9103;
+
   vxlan.enable = true;
   
   # Полное отключение systemd-resolved
