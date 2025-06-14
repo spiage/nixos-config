@@ -43,6 +43,9 @@ let
 
 in
 {
+
+  # documentation.nixos.enable = false; # temporaty workaround for build issue
+
   time.timeZone = "Europe/Moscow";
 
   imports = [ 
@@ -260,6 +263,8 @@ in
     ''--iptables=false --ip-masq=false -b br0'';
 
   environment.systemPackages = with pkgs; [
+
+    ncdu
 
     dig
 
