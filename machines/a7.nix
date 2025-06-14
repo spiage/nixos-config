@@ -7,7 +7,7 @@
   imports = [ 
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix 
-    ../profiles/network/smb-server.nix
+    ../profiles/storage/smb-server.nix
   ];
 
   systemd.network = {
