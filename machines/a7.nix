@@ -110,12 +110,12 @@
   # services.displayManager.autoLogin.enable = true;
   # services.displayManager.autoLogin.user = "spiage";
 
-  # services.xrdp = {
-  #   enable = true;
-  #   defaultWindowManager = "startplasma-x11";
-  #   openFirewall = true;
-  #   audio.enable = true;
-  # };
+  services.xrdp = {
+    enable = true;
+    defaultWindowManager = "startplasma-x11";
+    openFirewall = true;
+    audio.enable = true;
+  };
 
   services.libinput.enable = true;
   # services.fwupd.enable = true;

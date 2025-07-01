@@ -1,14 +1,16 @@
+{ pkgs, ... }:
 {
   services.ceph = {
     enable = true;
     global = {
-      fsid = "4b687c5c-5a20-4a77-8774-487989fd0bc7"; # Замените на ваш UUID!
-      public_network = "192.168.1.0/24";
-      auth_cluster_required = "none";
-      auth_service_required = "none";
-      auth_client_required = "none";
-      mon_initial_members = "q1, i7, j4";  # Все мониторы
-      mon_host = "192.168.1.18, 192.168.1.15, 192.168.1.16";  # IP всех мониторов
+      fsid = "8ed79199-4c23-4a21-8591-5016a822ba40"; # запустить uuidgen
+      publicNetwork = "192.168.1.0/24";
+      authClusterRequired = "none";
+      authServiceRequired = "none";
+      authClientRequired = "none";
+      monInitialMembers = "q1, i7, j4";
+      monHost = "192.168.1.18, 192.168.1.15, 192.168.1.16";
+
     };
     # Общие настройки OSD
     osd.extraConfig = {
@@ -25,4 +27,11 @@
     extraGroups = ["disk"];
   };
   users.groups.ceph = {};
+
+  environment.systemPackages = with pkgs; [
+    ceph # Основные утилиты
+    ceph-client # Только клиентские инструменты (опционально)
+    xfsprogs # Для работы с XFS (если будете форматировать RBD)
+  ];
+
 }

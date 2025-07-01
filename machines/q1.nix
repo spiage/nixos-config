@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   
@@ -10,9 +10,74 @@
     ../profiles/video/nvidia-simple.nix
     ../profiles/network/ntp-server-ru.nix
     ../profiles/network/dnsmasq.nix
+    ../profiles/storage/ceph-common.nix
     ../profiles/common.nix 
     ../profiles/k3s.nix 
   ];
+
+  # Специфичные настройки для q1
+  services.ceph = {
+    # Включаем только монитор
+    mon = {
+      enable = true;
+      daemons = ["q1"];  # ID демона должен совпадать с monInitialMembers
+    };
+
+    # Явно отключаем ненужные сервисы
+    mgr.enable = false;
+    osd.enable = false;
+    mds.enable = false;
+    rgw.enable = false;
+  };
+
+  # Дополнительные настройки безопасности
+  networking.firewall.allowedTCPPorts = [6789];  # Порт для мониторов
+
+  # Systemd сервис для ручной инициализации MON (только первый раз)
+  systemd.services."ceph-mon-init" = {
+    enable = true;
+    description = "Initialize Ceph Monitor on first boot";
+    before = ["ceph-mon-q1.service"];
+    requiredBy = ["ceph-mon-q1.service"];
+    script = let
+      ceph = pkgs.ceph;
+    in ''
+      # Создаем рабочий каталог с правильными правами
+      mkdir -p /var/lib/ceph/mon/ceph-q1
+      chown ceph:ceph /var/lib/ceph/mon/ceph-q1
+      
+      if ! [ -f /var/lib/ceph/mon/ceph-q1/keyring ]; then
+        echo "Initializing Ceph Monitor q1"
+        
+        # Создаем временный keyring
+        ${ceph}/bin/ceph-authtool --create-keyring /var/lib/ceph/mon/ceph-q1/keyring.tmp \
+          --gen-key -n mon. --cap mon 'allow *'
+        
+        # Создаем monmap
+        ${ceph}/bin/monmaptool --create --add q1 192.168.1.18 /var/lib/ceph/mon/ceph-q1/monmap
+        
+        # Инициализируем MON
+        ${ceph}/bin/ceph-mon --mkfs -i q1 \
+          --monmap /var/lib/ceph/mon/ceph-q1/monmap \
+          --keyring /var/lib/ceph/mon/ceph-q1/keyring.tmp
+        
+        # Перемещаем временный keyring в постоянный
+        mv /var/lib/ceph/mon/ceph-q1/keyring.tmp /var/lib/ceph/mon/ceph-q1/keyring
+        
+        # Создаем файл-маркер для systemd
+        touch /var/lib/ceph/mon/ceph-q1/done
+      else
+        echo "Ceph Monitor already initialized"
+      fi
+    '';
+    serviceConfig = {
+      Type = "oneshot";
+      User = "ceph";
+      RemainAfterExit = true;
+      StateDirectory = "ceph/mon/ceph-q1";  # Добавлено для корректных прав
+    };
+    wantedBy = ["multi-user.target"];
+  };
 
   profiles.networking.dns-dhcp-server = {
     enable = true;
