@@ -31,6 +31,8 @@
       };
     };    
   };
+  
+#  system.etc.overlay.enable = true; # /etc via overlay filesystem
 
   boot.initrd.kernelModules = [ "amdgpu" "coretemp" ];
   boot.kernelParams = [
@@ -272,7 +274,13 @@
 
   services.flatpak.enable = true;
   programs.nix-ld.enable = true;
+
+  nixpkgs.config.permittedInsecurePackages = [
+    "libxml2-2.13.8"
+  ];
+
   environment.systemPackages = with pkgs; [
+    gparted
     # Временно отключил, в hyper-v не нужно
     # libreoffice-qt6-fresh
     # (pkgs.zoom-us.override { xdgDesktopPortalSupport = false; }) # zoom-us # zoom.us video conferencing application
@@ -349,7 +357,7 @@
 
     # zfs # ZFS Filesystem Linux Userspace Tools
 
-    guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
+    # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
 
     cdrkit # Portable command-line CD/DVD recorder software, mostly compatible with cdrtools
       # Programs provided
@@ -389,7 +397,7 @@
 
     # dbeaver-bin # Free multi-platform database tool for developers, SQL programmers, database administrators and analysts. Supports all popular databases: MySQL, PostgreSQL, MariaDB, SQLite, Oracle, DB2, SQL Server, Sybase, MS Access, Teradata, Firebird, Derby, etc.
 
-    thunderbird-latest # 132
+    # thunderbird-latest # 132
     # thunderbird # 128ESR
     # birdtray
 
@@ -433,7 +441,7 @@
     # input.vmwarehorizonclient.legacyPackages.x86_64-linux.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "vmware-horizon-client" ]
     # import input.vmwarehorizonclient { config.allowUnfree = true; inherit system; } vmware-horizon-client
     # vhc.vmware-horizon-client
-    vmware-horizon-client
+    omnissa-horizon-client
 
     mc
     oh-my-git
@@ -443,7 +451,7 @@
     vscode-extensions.ms-toolsai.jupyter     
     vscode-extensions.bbenoist.nix
     vscode-extensions.github.copilot
-    vscode-extensions.ms-python.python
+    # vscode-extensions.ms-python.python
     vscode-extensions.hookyqr.beautify
     vscode-extensions.ms-vscode.cpptools
     vscode-extensions.jnoortheen.nix-ide
