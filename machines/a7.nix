@@ -112,6 +112,9 @@
   # services.displayManager.autoLogin.enable = true;
   # services.displayManager.autoLogin.user = "spiage";
 
+  # services.displayManager.cosmic-greeter.enable = true;
+  # services.desktopManager.cosmic.enable = true;
+
   services.xrdp = {
     enable = true;
     defaultWindowManager = "startplasma-x11";
@@ -284,7 +287,7 @@
     # Временно отключил, в hyper-v не нужно
     # libreoffice-qt6-fresh
     # (pkgs.zoom-us.override { xdgDesktopPortalSupport = false; }) # zoom-us # zoom.us video conferencing application
-    telegram-desktop
+    # telegram-desktop
 
     etcd
     
