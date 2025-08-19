@@ -53,7 +53,7 @@ in
   services.prometheus.exporters.node.enable = true;
   services.prometheus.exporters.node.port = 9103;
 
-  vxlan.enable = true;
+  # vxlan.enable = true;
   
   # Общие настройки для всех хостов
   networking.domain = homeDomain;
