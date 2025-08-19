@@ -21,7 +21,10 @@
         (lib.mkOverride 10 {
           # Явные зависимости
           Requires = [ "network-online.target" ];
-          After = [ "network-online.target" "systemd-networkd-wait-online.service" ];
+          After = [
+            "network-online.target"
+            "systemd-networkd-wait-online.service"
+          ];
         })
       ];
     };

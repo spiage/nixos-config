@@ -1,8 +1,14 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.profiles.networking.dhcp-server;
-in {
+in
+{
   options.profiles.networking.dhcp-server = {
     enable = lib.mkEnableOption "Enable DHCP server for homelab";
     interface = lib.mkOption {
@@ -41,18 +47,20 @@ in {
       description = "Local domain name";
     };
     staticHosts = lib.mkOption {
-      type = with lib.types; listOf (submodule {
-        options = {
-          mac = lib.mkOption { type = str; };
-          ip = lib.mkOption { type = str; };
-          name = lib.mkOption { type = str; };
-          description = lib.mkOption { 
-            type = str; 
-            default = ""; 
+      type =
+        with lib.types;
+        listOf (submodule {
+          options = {
+            mac = lib.mkOption { type = str; };
+            ip = lib.mkOption { type = str; };
+            name = lib.mkOption { type = str; };
+            description = lib.mkOption {
+              type = str;
+              default = "";
+            };
           };
-        };
-      });
-      default = [];
+        });
+      default = [ ];
       description = "Static host assignments";
     };
   };
@@ -63,7 +71,7 @@ in {
       settings = {
         # Отключаем DNS-сервер
         # port = 0;
-        
+
         # Настройки DHCP
         interface = cfg.interface;
         bind-interfaces = true;
@@ -72,13 +80,17 @@ in {
           "option:router,${cfg.gateway}"
           "option:dns-server,${cfg.dnsServer}"
         ];
-        dhcp-host = map (host: 
-          "${host.mac},${host.ip},${host.name},infinite" + 
-          (if host.description != "" then ",set:${host.description}" else "")
+        dhcp-host = map (
+          host:
+          "${host.mac},${host.ip},${host.name},infinite"
+          + (if host.description != "" then ",set:${host.description}" else "")
         ) cfg.staticHosts;
       };
     };
 
-    networking.firewall.allowedUDPPorts = [67 68];
+    networking.firewall.allowedUDPPorts = [
+      67
+      68
+    ];
   };
 }

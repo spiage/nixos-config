@@ -1,13 +1,17 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+{
   # Включить поддержку Ceph и необходимые модули
   boot.supportedFilesystems = [ "ceph" ];
   boot.kernelModules = [ "rbd" ];
 
   # Открыть порты в firewall
   networking.firewall = {
-    allowedTCPPorts = [ 
+    allowedTCPPorts = [
       6789 # Мониторы Ceph
-      6800-7300 # OSD
+      {
+        from = 6800;
+        to = 7300;
+      } # OSD
     ];
     allowedUDPPorts = [ 6789 ];
   };

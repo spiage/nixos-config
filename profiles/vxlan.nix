@@ -1,12 +1,18 @@
 # modules/vxlan.nix
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   homeDomainName = "k8s.local";
   vxlanId = 42;
   vxlanPort = 4789;
   vxlanNetwork = "10.0.0.0/16";
-in {
+in
+{
   options.vxlan.enable = lib.mkEnableOption "Enable VXLAN overlay network";
 
   config = lib.mkIf config.vxlan.enable {
@@ -27,19 +33,22 @@ in {
 
       networks."40-br-vxlan" = {
         matchConfig.Name = "br-vxlan";
-        bridge = ["vxlan0"];
+        bridge = [ "vxlan0" ];
         networkConfig = {
           Bridge = true;
           IPMasquerade = "both";
           LLMNR = true;
           MulticastDNS = true;
         };
-        addresses = [{
-          addressConfig.Address = 
-            let 
-              hostOctet = lib.last (lib.splitString "." config.networking.hostName);
-            in "10.0.0.${hostOctet}/16";
-        }];
+        addresses = [
+          {
+            addressConfig.Address =
+              let
+                hostOctet = lib.last (lib.splitString "." config.networking.hostName);
+              in
+              "10.0.0.${hostOctet}/16";
+          }
+        ];
       };
     };
 
@@ -64,8 +73,14 @@ in {
       };
     };
 
-    networking.firewall.allowedUDPPorts = [vxlanPort];
-    boot.kernelModules = [ "vxlan" "bridge" ];
-    environment.systemPackages = [ pkgs.bridge-utils pkgs.tcpdump ];
+    networking.firewall.allowedUDPPorts = [ vxlanPort ];
+    boot.kernelModules = [
+      "vxlan"
+      "bridge"
+    ];
+    environment.systemPackages = [
+      pkgs.bridge-utils
+      pkgs.tcpdump
+    ];
   };
 }

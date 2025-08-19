@@ -1,38 +1,50 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
 
   networking.hostName = "i9"; # Define your hostname.
   networking.hostId = "2ae0c11a";
 
-  imports = [ 
+  imports = [
     ../profiles/boot/systemd-boot.nix
     ../profiles/network/dns-client.nix
-    ../profiles/common.nix 
+    ../profiles/common.nix
   ];
   systemd.network = {
-    links."10-eth0".matchConfig.MACAddress = 
-      lib.concatStringsSep " " [  # Объединение через пробел
-        "2c:f0:5d:29:f6:01"   # Физический интерфейс
-      ];
-    
+    links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [
+      # Объединение через пробел
+      "2c:f0:5d:29:f6:01" # Физический интерфейс
+    ];
+
     networks = {
       "30-br0" = {
-        address = [ 
-          "192.168.1.201/16" 
+        address = [
+          "192.168.1.201/16"
           # Для IPv6 (если нужно):
           # "2001:db8::a7/64"
         ];
         networkConfig = {
-          DNS = "192.168.1.18";  # DNS-сервер q1
+          DNS = "192.168.1.18"; # DNS-сервер q1
           Gateway = "192.168.1.1";
         };
       };
-    };    
+    };
   };
 
   services.xserver.videoDrivers = [ "nvidia" ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "ahci"
+    "nvme"
+    "usbhid"
+    "usb_storage"
+    "sd_mod"
+  ];
   boot.initrd.kernelModules = [ ];
   # boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
@@ -101,29 +113,35 @@
     };
   };
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/8cdd3d84-92f6-4fdf-b22a-c802f889531c";
-      fsType = "btrfs";
-      options = [ "subvol=root" ];
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/8cdd3d84-92f6-4fdf-b22a-c802f889531c";
+    fsType = "btrfs";
+    options = [ "subvol=root" ];
+  };
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/8cdd3d84-92f6-4fdf-b22a-c802f889531c";
-      fsType = "btrfs";
-      options = [ "subvol=home" ];
-    };
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/8cdd3d84-92f6-4fdf-b22a-c802f889531c";
+    fsType = "btrfs";
+    options = [ "subvol=home" ];
+  };
 
-  fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/8cdd3d84-92f6-4fdf-b22a-c802f889531c";
-      fsType = "btrfs";
-      options = [ "subvol=nix" "noatime" ];
-    };
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-uuid/8cdd3d84-92f6-4fdf-b22a-c802f889531c";
+    fsType = "btrfs";
+    options = [
+      "subvol=nix"
+      "noatime"
+    ];
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/E1BF-23DD";
-      fsType = "vfat";
-      options = [ "fmask=0077" "dmask=0077" ];
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/E1BF-23DD";
+    fsType = "vfat";
+    options = [
+      "fmask=0077"
+      "dmask=0077"
+    ];
+  };
 
   # swapDevices =
   #   [ { device = "/dev/disk/by-uuid/3e86da97-ede3-4c0c-9dbf-9cdbc8550b44"; }

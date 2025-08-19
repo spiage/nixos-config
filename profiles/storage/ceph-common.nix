@@ -20,13 +20,13 @@
   };
 
   # Общие системные настройки
-  boot.kernelModules = ["ceph"];  # Для CephFS
+  boot.kernelModules = [ "ceph" ]; # Для CephFS
   users.users.ceph = {
     isSystemUser = true;
     group = "ceph";
-    extraGroups = ["disk"];
+    extraGroups = [ "disk" ];
   };
-  users.groups.ceph = {};
+  users.groups.ceph = { };
 
   environment.systemPackages = with pkgs; [
     ceph # Основные утилиты

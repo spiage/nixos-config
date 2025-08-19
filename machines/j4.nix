@@ -4,48 +4,62 @@
   networking.hostName = "j4"; # Define your hostname.
   networking.hostId = "6745d966";
 
-  imports = [ 
+  imports = [
     ../profiles/boot/systemd-boot.nix
     ../profiles/video/nvidia-simple.nix
     ../profiles/network/dns-client.nix
-    ../profiles/common.nix 
+    ../profiles/common.nix
   ];
   systemd.network = {
-    links."10-eth0".matchConfig.MACAddress = 
-      lib.concatStringsSep " " [  # Объединение через пробел
-        "f4:a4:54:87:66:ef"   # Физический интерфейс
-      ];
-    
+    links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [
+      # Объединение через пробел
+      "f4:a4:54:87:66:ef" # Физический интерфейс
+    ];
+
     networks = {
       "30-br0" = {
-        address = [ 
-          "192.168.1.16/16" 
+        address = [
+          "192.168.1.16/16"
           # Для IPv6 (если нужно):
           # "2001:db8::a7/64"
         ];
         networkConfig = {
-          DNS = "192.168.1.18";  # DNS-сервер q1
+          DNS = "192.168.1.18"; # DNS-сервер q1
           Gateway = "192.168.1.1";
         };
       };
-    };    
+    };
   };
 
-  boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "pata_jmicron" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.availableKernelModules = [
+    "ahci"
+    "xhci_pci"
+    "pata_jmicron"
+    "nvme"
+    "usbhid"
+    "usb_storage"
+    "sd_mod"
+  ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" "kvm-intel" ];
+  boot.kernelModules = [
+    "kvm-intel"
+    "kvm-intel"
+  ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/eebf8ebb-2f59-43c9-bbca-495bd11cc359";
-      fsType = "xfs";
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/eebf8ebb-2f59-43c9-bbca-495bd11cc359";
+    fsType = "xfs";
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/0BE9-0BB1";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/0BE9-0BB1";
+    fsType = "vfat";
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
+  };
 
   # swapDevices =
   #   [ { device = "/dev/disk/by-uuid/0a3e5298-1553-4efb-ba47-3bc330d803b0"; }
@@ -91,7 +105,7 @@
   #       "hosts deny" = "0.0.0.0/0";
   #       "guest account" = "nobody";
   #       "map to guest" = "bad user";
-  #     };    
+  #     };
   #     public = {
   #       path = "/srv/Shares/Public";
   #       browseable = "yes";
@@ -149,7 +163,7 @@
   # networking.firewall.allowPing = true;
   # networking.firewall.extraCommands = ''iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns'';
   # networking.firewall.allowedTCPPorts = [ 7946 ];
-  
+
   # services.nfs.server.enable = true;
   # services.nfs.server.exports = ''
   #   /srv/nfs         192.168.0.0/16(rw,fsid=0,no_subtree_check,no_root_squash,sync)

@@ -1,15 +1,24 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.profiles.networking.dns-server;
   dhcpCfg = config.profiles.networking.dhcp-server;
   domain = dhcpCfg.domain;
-in {
+in
+{
   options.profiles.networking.dns-server = {
     enable = lib.mkEnableOption "Enable DNS server for homelab";
     forwarders = lib.mkOption {
       type = with lib.types; listOf str;
-      default = ["1.1.1.1" "8.8.8.8"];
+      default = [
+        "1.1.1.1"
+        "8.8.8.8"
+      ];
       description = "Upstream DNS servers";
     };
   };
@@ -26,15 +35,13 @@ in {
         server = cfg.forwarders;
         local = "/${domain}/";
         expand-hosts = true;
-        
+
         # Статические записи
-        address = map (host: 
-          "/${host.name}.${domain}/${host.ip}"
-        ) dhcpCfg.staticHosts;
+        address = map (host: "/${host.name}.${domain}/${host.ip}") dhcpCfg.staticHosts;
       };
     };
 
-    networking.firewall.allowedTCPPorts = [53];
-    networking.firewall.allowedUDPPorts = [53];
+    networking.firewall.allowedTCPPorts = [ 53 ];
+    networking.firewall.allowedUDPPorts = [ 53 ];
   };
 }
