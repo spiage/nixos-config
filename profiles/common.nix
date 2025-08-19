@@ -37,10 +37,6 @@ let
     "192.168.1.110 grafana-01 grafana-01.${homeDomain}"
   ];
 
-  dnsServer = if config.networking.hostName == "q1" 
-              then "127.0.0.1" 
-              else "192.168.1.18";
-
 in
 {
 
@@ -50,8 +46,8 @@ in
 
   imports = [ 
     ../profiles/network/ntp-client.nix
-    ../profiles/vxlan.nix # не работает, перепробовал всякое :(
-    # ../profiles/ceph.nix
+    # ../profiles/vxlan.nix # не работает, перепробовал всякое :(
+    # ../profiles/ceph.nix # временно отключен
   ];
 
   services.prometheus.exporters.node.enable = true;
@@ -59,23 +55,6 @@ in
 
   vxlan.enable = true;
   
-  # Полное отключение systemd-resolved
-  services.resolved.enable = false;
-  # systemd.services.systemd-resolved.enable = false;
-  environment.etc."resolv.conf".text = ''
-    nameserver ${dnsServer}
-    nameserver 192.168.1.1
-    search k8s.local
-  '';  
-  
-  # Удалить старый файл resolv.conf
-  # environment.etc."resolv.conf".enable = true;
-  # environment.etc."resolv.conf".text = "nameserver 192.168.1.1";
-
-  # vxlanConfig.enable = true;
-
-  # networking.bridges."br-vxlan".interfaces = [];
-
   # Общие настройки для всех хостов
   networking.domain = homeDomain;
   networking.search = [ homeDomain ];
@@ -128,13 +107,6 @@ in
   # Объединенные хосты: основные + VM
   networking.extraHosts = lib.concatStringsSep "\n" (coreHosts ++ vmHosts);
 
-  # zramSwap.enable = true;
-  # zramSwap.memoryPercent = 100;
-  # boot.kernel.sysctl = { 
-  #   "vm.swappiness" = 180;
-  #   "vm.page-cluster" = 0;
-  # };
-
   boot.supportedFilesystems = [ "ntfs" "btrfs" "ext4" "xfs" "zfs" ];
   boot.kernelPackages = latestKernelPackage;
   boot.swraid.enable = false;
@@ -154,30 +126,6 @@ in
   nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
   networking.networkmanager.enable = false;
-  # networking.networkmanager.plugins = lib.mkForce [ ];
-  ### default plugins are:
-        # networkmanager.plugins = with pkgs; [
-        #   networkmanager-fortisslvpn
-        #   networkmanager-iodine
-        #   networkmanager-l2tp
-        #   networkmanager-openconnect
-        #   networkmanager-openvpn
-        #   networkmanager-vpnc
-        #   networkmanager-sstp
-        # ];
-  # networking.networkmanager.appendNameservers = [ "192.168.1.1" ];
-  # networking.useDHCP = lib.mkDefault true;
-  # networking.extraHosts =
-  #   ''
-  #     ${kubeMasterIP} ${kubeMasterHostname}
-  #     136.243.168.226 download.qt.io
-  #     192.168.122.60 u2004-01
-  #     192.168.1.2   a7 a7.${homeDomainName}
-  #     192.168.1.201 i9 i9.${homeDomainName}
-  #     192.168.1.15  i7 i7.${homeDomainName}
-  #     192.168.1.16  j4 j4.${homeDomainName}
-  #     192.168.1.18  q1 q1.${homeDomainName}
-  #   '';
 
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "ru_RU.UTF-8";

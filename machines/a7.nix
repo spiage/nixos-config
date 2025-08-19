@@ -5,10 +5,21 @@
   networking.hostId = "262de9ae";
 
   imports = [ 
+    inputs.nixos-hardware.nixosModules.common-cpu-amd
+    inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
+    inputs.nixos-hardware.nixosModules.common-cpu-amd-raphael-igpu
+    inputs.nixos-hardware.nixosModules.common-gpu-amd
+    inputs.nixos-hardware.nixosModules.common-hidpi
+    inputs.nixos-hardware.nixosModules.common-pc
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
+    inputs.vscode-server.nixosModules.default
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix 
+    ../profiles/network/dns-client.nix
     ../profiles/storage/smb-server.nix
   ];
+
+  services.vscode-server.enable = true;
 
   systemd.network = {
     links."10-eth0".matchConfig.MACAddress = 

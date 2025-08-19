@@ -7,6 +7,7 @@
   imports = [ 
     ../profiles/boot/systemd-boot.nix
     ../profiles/video/nvidia-simple.nix
+    ../profiles/network/dns-client.nix
     ../profiles/common.nix 
   ];
   systemd.network = {

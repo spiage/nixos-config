@@ -113,7 +113,14 @@
     "127.0.0.1"    # Локальный Knot DNS
     "192.168.1.1"  # Роутер (резерв)
   ];
-
+  # Полное отключение systemd-resolved
+  services.resolved.enable = false;
+  # systemd.services.systemd-resolved.enable = false;
+  environment.etc."resolv.conf".text = ''
+    nameserver 127.0.0.1
+    nameserver 192.168.1.1
+    search k8s.local
+  ''; 
   # Конфигурация бриджа (остается без изменений)
   systemd.network = {
     links."10-eth0".matchConfig.MACAddress = "20:7c:14:f4:21:34";

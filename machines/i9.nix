@@ -6,6 +6,7 @@
 
   imports = [ 
     ../profiles/boot/systemd-boot.nix
+    ../profiles/network/dns-client.nix
     ../profiles/common.nix 
   ];
   systemd.network = {
