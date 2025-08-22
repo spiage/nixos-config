@@ -344,12 +344,8 @@
 
     etcd
 
-    tcpdump
-
     # kcat не умеет в ssl # Generic non-JVM producer and consumer for Apache Kafka
     # ERROR: Failed to create producer: No provider for SASL mechanism SCRAM-SHA-512: recompile librdkafka with libsasl2 or openssl support. Current build options: PLAIN
-
-    iperf3
 
     x11vnc
 
@@ -429,8 +425,6 @@
 
     #ciscoPacketTracer8 # Network simulation tool from Cisco
 
-    dig # Domain name server
-
     mongodb-compass
 
     #_broken_ apache-airflow # Programmatically author, schedule and monitor data pipelines
@@ -485,8 +479,6 @@
     kubernetes-helm
     kubernetes-metrics-server
 
-    ncdu # Disk usage analyzer with an ncurses interface
-
     # micro
     # helix
     # st
@@ -497,10 +489,8 @@
     # vhc.vmware-horizon-client
     omnissa-horizon-client
 
-    mc
     oh-my-git
 
-    git
     vscode
     vscode-extensions.ms-toolsai.jupyter
     vscode-extensions.bbenoist.nix
@@ -533,7 +523,6 @@
 
     nixd
     nil
-    jq
     tree
 
     # partition-manager # inputs.kde2nix.packages.x86_64-linux.partitionmanager
@@ -581,12 +570,9 @@
     sqlite
     postgresql
 
-    nix-tree
     xsel # xclip #pbcopy wl-copy xsel (for 'Y to copy path')
-    nvd
     qdirstat
     glxinfo
-    vulkan-tools
     gpu-viewer
 
     flare

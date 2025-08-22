@@ -253,17 +253,11 @@ in
 
   environment.systemPackages = with pkgs; [
 
-    ncdu
+    ncdu # Disk usage analyzer with an ncurses interface
 
     dig
 
     cloud-utils
-    # guestfs-tools
-    cdrkit
-
-    # libguestfs-with-appliance
-    # libguestfs # Tools for accessing and modifying virtual machine disk images:
-    # guestfish guestfsd guestmount guestunmount libguestfs-test-tool virt-copy-in virt-copy-out virt-rescue virt-tar-in virt-tar-out
 
     tcpdump
     iperf3
