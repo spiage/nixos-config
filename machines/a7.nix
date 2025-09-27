@@ -408,6 +408,7 @@
     # zfs # ZFS Filesystem Linux Userspace Tools
 
     # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
+    libguestfs-with-appliance
 
     cdrkit # Portable command-line CD/DVD recorder software, mostly compatible with cdrtools
     # Programs provided

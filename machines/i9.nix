@@ -75,6 +75,9 @@
       enable32Bit = true;
     };
   };
+
+  programs.virt-manager.enable = true;
+
   environment.systemPackages = with pkgs; [
     ollama
     (pkgs.gpufetch.override { cudaSupport = true; })
@@ -84,6 +87,8 @@
     zenith-nvidia
     nvitop
     #      nvidia-vaapi-driver
+    # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
+    libguestfs-with-appliance    
   ];
 
   environment.shellAliases = {
