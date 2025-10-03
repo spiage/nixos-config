@@ -118,7 +118,7 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   #hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  virtualisation.hypervGuest.enable = true;
+  # virtualisation.hypervGuest.enable = true;
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -144,7 +144,7 @@
   services.xserver.xkb.layout = "us,ru";
   services.xserver.xkb.options = "grp:win_space_toggle";
   services.xserver.videoDrivers = [
-    "modesetting"
+    # "modesetting"
     "amdgpu"
   ];
   services.desktopManager.plasma6.enable = true;
@@ -216,7 +216,7 @@
       domain = "*";
       type = "soft";
       item = "nofile";
-      value = "99999";
+      value = "65536";
     }
   ];
 
