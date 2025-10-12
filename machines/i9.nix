@@ -109,6 +109,8 @@
           sklearn-compat # sklearn-deap is broken
           # vllm # broken
           ipywidgets 
+          matplotlib
+          seaborn
         ]);
         argv = [
           "${config.services.jupyter.kernels.python-torch.package}/bin/python"
