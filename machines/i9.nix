@@ -133,6 +133,15 @@
     # };
   };
   nixpkgs.config.cudaSupport = true;
+  nixpkgs.overlays = [ (final: prev: {
+    pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [ (pyfinal: pyprev: {
+      rapidocr-onnxruntime = pyprev.rapidocr-onnxruntime.overridePythonAttrs (oldAttrs: {
+        doCheck = false;
+        doInstallCheck = false;
+        dontCheck = true;
+      });
+    }) ];
+  }) ];  
   environment.systemPackages = with pkgs; [
     distrobox
     ollama
