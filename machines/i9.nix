@@ -78,7 +78,63 @@
 
   programs.virt-manager.enable = true;
 
+  programs.nix-ld.enable = true;
+  services.jupyter = {
+
+    enable = true;
+    ip = "192.168.1.201";
+    user = "spiage";
+    password = "argon2:$argon2id$v=19$m=10240,t=10,p=8$AcayH3XHAMiWAERGhHF0XA$czsRPzyaZkroMPjgW1ULUwKHQchX9YTbF42E/xXTMnU";
+    notebookDir = "~/repos";
+
+    kernels = {
+      python-torch = {
+        display_name = "Python 3 (with PyTorch)";
+        language = "python";
+        package = pkgs.python3.withPackages (ps: with ps; [
+          torch
+          torchvision
+          transformers
+          ipykernel # ipykernel обязателен для работы Jupyter!
+          datasets
+          peft
+          bitsandbytes
+          accelerate
+          graphviz
+          # torchview
+          # torchviz
+          evaluate
+          huggingface-hub
+          fsspec
+          sklearn-compat # sklearn-deap is broken
+          # vllm # broken
+        ]);
+        argv = [
+          "${config.services.jupyter.kernels.python-torch.package}/bin/python"
+          "-m"
+          "ipykernel_launcher"
+          "-f"
+          "{connection_file}"
+        ];
+      };
+    };
+  };
+  virtualisation = {
+    podman = {
+      enable = true;
+      dockerCompat = true;
+      dockerSocket.enable = true;
+      defaultNetwork.settings.dns_enabled = true;
+      # declare containers
+    };
+    # oci-containers = {
+    #   ## use podman as default container engine
+    #   backend = "podman";
+    # };
+  };
+  nixpkgs.config.cudaSupport = true;
   environment.systemPackages = with pkgs; [
+    distrobox
     ollama
     (pkgs.gpufetch.override { cudaSupport = true; })
     nvtopPackages.nvidia
@@ -88,7 +144,17 @@
     nvitop
     #      nvidia-vaapi-driver
     # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
-    libguestfs-with-appliance    
+    libguestfs-with-appliance   
+    (python3.withPackages (
+      ps: with ps; [
+        notebook
+        jupyter
+        ipykernel
+        torch
+        pip
+        requests
+      ]
+    )) 
   ];
 
   environment.shellAliases = {

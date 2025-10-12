@@ -118,7 +118,7 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   #hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  # virtualisation.hypervGuest.enable = true;
+  virtualisation.hypervGuest.enable = true;
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -144,7 +144,7 @@
   services.xserver.xkb.layout = "us,ru";
   services.xserver.xkb.options = "grp:win_space_toggle";
   services.xserver.videoDrivers = [
-    # "modesetting"
+    "modesetting"
     "amdgpu"
   ];
   services.desktopManager.plasma6.enable = true;
@@ -267,13 +267,13 @@
       [ "${automount_opts},credentials=/etc/nixos/smb-secrets,uid=1000,gid=100" ];
   };
 
-  services.k3s = {
-    enable = true;
-    role = "server";
-    token = "Ee1ySKGVulT61yhl2hRDgXVP33OC8R0P"; # tr -dc A-Za-z0-9 </dev/urandom | head -c 32; echo
-    clusterInit = true;
-    extraFlags = "--write-kubeconfig-mode=644";
-  };
+  # services.k3s = {
+  #   enable = true;
+  #   role = "server";
+  #   token = "Ee1ySKGVulT61yhl2hRDgXVP33OC8R0P"; # tr -dc A-Za-z0-9 </dev/urandom | head -c 32; echo
+  #   clusterInit = true;
+  #   extraFlags = "--write-kubeconfig-mode=644";
+  # };
 
   # Проблема - русские имена файлов не поддерживаются в винде :(
   # services.nfs.server = {
@@ -336,6 +336,9 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    omnissa-horizon-client
+    # flare
+
     gparted
     # Временно отключил, в hyper-v не нужно
     # libreoffice-qt6-fresh
@@ -488,7 +491,6 @@
     # input.vmwarehorizonclient.legacyPackages.x86_64-linux.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "vmware-horizon-client" ]
     # import input.vmwarehorizonclient { config.allowUnfree = true; inherit system; } vmware-horizon-client
     # vhc.vmware-horizon-client
-    omnissa-horizon-client
 
     oh-my-git
 
@@ -576,7 +578,6 @@
     glxinfo
     gpu-viewer
 
-    flare
     wesnoth
 
     qemu_kvm

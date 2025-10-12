@@ -195,12 +195,13 @@ in
   virtualisation.libvirtd.enable = true;
   virtualisation.libvirtd.onShutdown = "shutdown";
   virtualisation.libvirtd.qemu.package = pkgs.qemu_kvm;
-  virtualisation.libvirtd.qemu.ovmf.packages = [
-    (pkgs.OVMF.override {
-      secureBoot = true;
-      tpmSupport = true;
-    }).fd
-  ];
+  #The 'virtualisation.libvirtd.qemu.ovmf' submodule has been removed. All OVMF images distributed with QEMU are now available by default.
+  # virtualisation.libvirtd.qemu.ovmf.packages = [
+  #   (pkgs.OVMF.override {
+  #     secureBoot = true;
+  #     tpmSupport = true;
+  #   }).fd
+  # ];
   virtualisation.libvirtd.allowedBridges = [
     "virbr1"
     "virbr0"
