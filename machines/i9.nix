@@ -108,6 +108,7 @@
           fsspec
           sklearn-compat # sklearn-deap is broken
           # vllm # broken
+          ipywidgets 
         ]);
         argv = [
           "${config.services.jupyter.kernels.python-torch.package}/bin/python"
@@ -162,6 +163,7 @@
         torch
         pip
         requests
+        ipywidgets 
       ]
     )) 
   ];
