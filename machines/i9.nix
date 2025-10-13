@@ -112,7 +112,7 @@
           matplotlib
           seaborn
           optuna
-          catboost
+          # catboost # catboost is broken
           xgboost
           lightgbm
           numpy
