@@ -111,6 +111,12 @@
           ipywidgets 
           matplotlib
           seaborn
+          optuna
+          catboost
+          xgboost
+          lightgbm
+          numpy
+          pandas
         ]);
         argv = [
           "${config.services.jupyter.kernels.python-torch.package}/bin/python"
