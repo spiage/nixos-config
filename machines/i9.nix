@@ -114,7 +114,7 @@
           optuna
           # catboost # catboost is broken
           xgboost
-          lightgbm
+          # lightgbm # broken
           numpy
           pandas
         ]);
