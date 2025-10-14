@@ -117,6 +117,10 @@
           # lightgbm # broken
           numpy
           pandas
+          pip
+          requests
+          scipy
+          scikit-learn
         ]);
         argv = [
           "${config.services.jupyter.kernels.python-torch.package}/bin/python"
