@@ -183,17 +183,17 @@ in {
     #      nvidia-vaapi-driver
     # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
     libguestfs-with-appliance   
-    (python3.withPackages (
-      ps: with ps; [
-        notebook
-        jupyter
-        ipykernel
-        torch
-        pip
-        requests
-        ipywidgets 
-      ]
-    )) 
+    # (python3.withPackages (
+    #   ps: with ps; [
+    #     notebook
+    #     jupyter
+    #     ipykernel
+    #     torch
+    #     pip
+    #     requests
+    #     ipywidgets 
+    #   ]
+    # )) 
   ];
 
   environment.shellAliases = {
