@@ -4,7 +4,15 @@
   lib,
   ...
 }:
-{
+let
+  # Обертка для ядра Jupyter, чтобы pip мог устанавливать пакеты в ~/.local
+  kernelWrapper = pkgs.writeShellScriptBin "ipykernel_launcher_wrapper" ''
+    export PIP_USER=true
+    export PATH="$HOME/.local/bin:$PATH"
+    exec ${config.services.jupyter.kernels.python-torch.package}/bin/python -m ipykernel_launcher "$@"
+  '';
+
+in {
 
   networking.hostName = "i9"; # Define your hostname.
   networking.hostId = "2ae0c11a";
@@ -86,7 +94,6 @@
     user = "spiage";
     password = "argon2:$argon2id$v=19$m=10240,t=10,p=8$AcayH3XHAMiWAERGhHF0XA$czsRPzyaZkroMPjgW1ULUwKHQchX9YTbF42E/xXTMnU";
     notebookDir = "~/repos";
-
     kernels = {
       python-torch = {
         display_name = "Python 3 (with PyTorch)";
@@ -123,9 +130,7 @@
           scikit-learn
         ]);
         argv = [
-          "${config.services.jupyter.kernels.python-torch.package}/bin/python"
-          "-m"
-          "ipykernel_launcher"
+          "${kernelWrapper}/bin/ipykernel_launcher_wrapper"
           "-f"
           "{connection_file}"
         ];
