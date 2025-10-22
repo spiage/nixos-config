@@ -218,6 +218,13 @@ in {
         pandas
         scipy
         scikit-learn
+        langchain 
+        sentence-transformers 
+        tqdm 
+        openpyxl 
+        openai 
+        langchain-community 
+        ragatouille
       ]
     )) 
   ];
