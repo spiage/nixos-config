@@ -101,7 +101,7 @@ in {
 
   services.jupyter = {
 
-    enable = true;
+    enable = false;
     ip = "192.168.1.201";
     user = "spiage";
     password = "argon2:$argon2id$v=19$m=10240,t=10,p=8$AcayH3XHAMiWAERGhHF0XA$czsRPzyaZkroMPjgW1ULUwKHQchX9YTbF42E/xXTMnU";
@@ -184,17 +184,42 @@ in {
     #      nvidia-vaapi-driver
     # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
     libguestfs-with-appliance   
-    # (python3.withPackages (
-    #   ps: with ps; [
-    #     notebook
-    #     jupyter
-    #     ipykernel
-    #     torch
-    #     pip
-    #     requests
-    #     ipywidgets 
-    #   ]
-    # )) 
+    (python3.withPackages (
+      ps: with ps; [
+        notebook
+        jupyter
+        ipykernel
+        pip
+        requests
+        ipywidgets 
+
+        torch
+        torchvision
+        transformers
+        datasets
+        peft
+        bitsandbytes
+        accelerate
+        graphviz
+        # torchview
+        # torchviz
+        evaluate
+        huggingface-hub
+        fsspec
+        sklearn-compat # sklearn-deap is broken
+        # vllm # broken
+        matplotlib
+        seaborn
+        optuna
+        # catboost # catboost is broken
+        xgboost
+        # lightgbm # broken
+        numpy
+        pandas
+        scipy
+        scikit-learn
+      ]
+    )) 
   ];
 
   environment.shellAliases = {
