@@ -336,6 +336,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    # etcd # failed
     omnissa-horizon-client
     # flare
 
@@ -345,7 +346,6 @@
     # (pkgs.zoom-us.override { xdgDesktopPortalSupport = false; }) # zoom-us # zoom.us video conferencing application
     # telegram-desktop
 
-    etcd
 
     # kcat не умеет в ssl # Generic non-JVM producer and consumer for Apache Kafka
     # ERROR: Failed to create producer: No provider for SASL mechanism SCRAM-SHA-512: recompile librdkafka with libsasl2 or openssl support. Current build options: PLAIN

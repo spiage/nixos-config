@@ -8,6 +8,7 @@ let
   # Обертка для ядра Jupyter, чтобы pip мог устанавливать пакеты в ~/.local
   kernelWrapper = pkgs.writeShellScriptBin "ipykernel_launcher_wrapper" ''
     unset PYTHONNOUSERSITE
+    unset VIRTUAL_ENV
     export PIP_USER=true
     export PATH="$HOME/.local/bin:$PATH"
     exec ${config.services.jupyter.kernels.python-torch.package}/bin/python -m ipykernel_launcher "$@"
