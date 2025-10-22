@@ -224,7 +224,6 @@ in {
         openpyxl 
         openai 
         langchain-community 
-        ragatouille
       ]
     )) 
   ];
