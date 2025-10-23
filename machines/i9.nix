@@ -65,7 +65,14 @@ in {
   };
 
   hardware = {
-    nvidia-container-toolkit.enable = true;
+    nvidia-container-toolkit = {
+      enable = true;
+      discovery-mode = "nvml";
+      extraArgs = [
+        "--debug"
+      ];
+      mount-nvidia-executables = true;
+    };
     nvidia = {
       modesetting.enable = true;
       powerManagement.enable = true;
