@@ -68,9 +68,6 @@ in {
     nvidia-container-toolkit = {
       enable = true;
       discovery-mode = "nvml";
-      extraArgs = [
-        "--debug"
-      ];
       mount-nvidia-executables = true;
     };
     nvidia = {
