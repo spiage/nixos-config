@@ -178,6 +178,7 @@ in {
     }) ];
   }) ];  
   environment.systemPackages = with pkgs; [
+    podman-compose
     distrobox
     ollama
     (pkgs.gpufetch.override { cudaSupport = true; })
