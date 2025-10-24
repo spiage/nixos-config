@@ -178,6 +178,7 @@ in {
     }) ];
   }) ];  
   environment.systemPackages = with pkgs; [
+    dive
     podman-compose
     distrobox
     ollama
