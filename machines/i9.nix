@@ -186,6 +186,7 @@ in {
     vulkan-tools
     zenith-nvidia
     nvitop
+    uv
     #      nvidia-vaapi-driver
     # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
     libguestfs-with-appliance   
