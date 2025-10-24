@@ -193,6 +193,16 @@ in {
     (python3.withPackages (
       ps: with ps; [
         pip
+        json
+        torch
+        fastapi
+        uvicorn
+        transformers
+        tensorflow
+        numpy
+        pandas
+        accelerate
+        requests
       ]
     )) 
     # (python3.withPackages (
