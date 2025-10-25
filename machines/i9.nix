@@ -67,7 +67,6 @@ in {
   hardware = {
     nvidia-container-toolkit = {
       enable = true;
-      discovery-mode = "csv";
       mount-nvidia-executables = true;
     };
     nvidia = {
