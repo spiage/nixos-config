@@ -294,7 +294,7 @@ in
     # geekbench
     rsync
     restic
-    rustic-rs
+    rustic
     borgbackup
     pika-backup
     rclone

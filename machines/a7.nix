@@ -50,7 +50,6 @@
   };
 
   #  system.etc.overlay.enable = true; # /etc via overlay filesystem
-
   boot.initrd.kernelModules = [
     "amdgpu"
     "coretemp"
@@ -174,7 +173,7 @@
   fonts.packages = with pkgs; [
     noto-fonts
     noto-fonts-cjk-sans
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     liberation_ttf
     fira-code
     fira-code-symbols
@@ -575,7 +574,7 @@
 
     xsel # xclip #pbcopy wl-copy xsel (for 'Y to copy path')
     qdirstat
-    glxinfo
+    mesa-demos
     gpu-viewer
 
     wesnoth
