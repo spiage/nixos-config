@@ -284,10 +284,12 @@
   # networking.firewall.allowedTCPPorts = [ 2049 ]; # открыть порт NFS
 
   services.samba = {
-    shares.testshare = {
-      path = "/mnt/store/zstd19";
-      writable = "true";
-      comment = "Hello World!";
+    settings = {
+      "testshare" = {
+        path = "/mnt/store/zstd19";
+        writable = "yes";
+        comment = "Hello World!";
+      };
     };
   };
 
@@ -377,8 +379,6 @@
     zotero
     kubevirt
 
-    libvirt
-
     ghostty
 
     terraform
@@ -433,7 +433,7 @@
     #_broken_ apache-airflow # Programmatically author, schedule and monitor data pipelines
 
     yandex-cloud # Command line interface that helps you interact with Yandex Cloud services
-    terraform-providers.yandex
+    terraform-providers.yandex-cloud_yandex
 
     #hplipWithPlugin # Print, scan and fax HP drivers for Linux
 
