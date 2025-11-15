@@ -295,7 +295,7 @@ in
     rar
     fwupd
     nvme-cli
-    hw-probe
+    # hw-probe
     inxi
     dmidecode
     clinfo
