@@ -174,7 +174,7 @@ in {
         doInstallCheck = false;
         dontCheck = true;
       });
-      langchain-community = python-prev.langchain-community.overridePythonAttrs (oldAttrs: {
+      langchain-community = pyprev.langchain-community.overridePythonAttrs (oldAttrs: {
         disabledTestPaths = (oldAttrs.disabledTestPaths or [ ]) ++ [
           "tests/unit_tests/agents/test_openai_assistant.py"
           "tests/unit_tests/agents/test_react.py"
