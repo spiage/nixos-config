@@ -41,7 +41,7 @@
     ../profiles/video/nvidia-simple.nix
     ../profiles/network/dns-client.nix
     ../profiles/common.nix
-    ../profiles/k3s.nix
+    # ../profiles/k3s.nix
     # ../profiles/libvirt-vms.nix
   ];
   systemd.network = {
@@ -100,7 +100,7 @@
   ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "wl" ];
-  boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
+  # boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/db517bd8-d60d-4179-8c58-f3fb8a16edad";

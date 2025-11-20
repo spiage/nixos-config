@@ -16,7 +16,7 @@
     ../profiles/network/ntp-server-ru.nix
     ../profiles/network/dnsmasq.nix
     ../profiles/common.nix
-    ../profiles/k3s.nix
+    # ../profiles/k3s.nix
   ];
 
   profiles.networking.dns-dhcp-server = {
