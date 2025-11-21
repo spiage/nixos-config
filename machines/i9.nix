@@ -383,17 +383,17 @@ in {
 
   };
 
-  # services.open-webui = {
-  #   enable = true;
-  #   port = 8081;
-  #   environment = {
-  #     ANONYMIZED_TELEMETRY = "False";
-  #     DO_NOT_TRACK = "True";
-  #     SCARF_NO_ANALYTICS = "True";
-  #     OLLAMA_API_BASE_URL = "http://192.168.1.201:11434";
-  #     WEBUI_AUTH = "False";
-  #   };
-  #   host = "192.168.1.201";
-  #   openFirewall = true;
-  # };
+  services.open-webui = {
+    enable = true;
+    port = 8081;
+    environment = {
+      ANONYMIZED_TELEMETRY = "False";
+      DO_NOT_TRACK = "True";
+      SCARF_NO_ANALYTICS = "True";
+      OLLAMA_API_BASE_URL = "http://192.168.1.201:11434";
+      WEBUI_AUTH = "False";
+    };
+    host = "192.168.1.201";
+    openFirewall = true;
+  };
 }
