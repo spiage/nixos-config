@@ -166,7 +166,7 @@ in {
     #   backend = "podman";
     # };
   };
-  nixpkgs.config.cudaSupport = true;
+  # nixpkgs.config.cudaSupport = true;
   # nixpkgs.overlays = [ (final: prev: {
   #   pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [ (pyfinal: pyprev: {
   #     rapidocr-onnxruntime = pyprev.rapidocr-onnxruntime.overridePythonAttrs (oldAttrs: {
