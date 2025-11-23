@@ -168,13 +168,13 @@ in {
     #   backend = "podman";
     # };
   };
-
-  # https://nixos.org/manual/nixpkgs/unstable/#cuda
-  allowUnfreePredicate = pkgs._cuda.lib.allowUnfreeCudaPredicate;
-  cudaCapabilities = [ "8.7" ]; # https://en.wikipedia.org/wiki/CUDA#GPUs_supported
-  cudaForwardCompat = true;
-  cudaSupport = true;
-
+  nixpkgs.config = {
+    # https://nixos.org/manual/nixpkgs/unstable/#cuda
+    allowUnfreePredicate = pkgs._cuda.lib.allowUnfreeCudaPredicate;
+    cudaCapabilities = [ "8.7" ]; # https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+    cudaForwardCompat = true;
+    cudaSupport = true;
+  };
   nixpkgs.overlays = [ (final: prev: {
     pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [ (pyfinal: pyprev: {
       rapidocr-onnxruntime = pyprev.rapidocr-onnxruntime.overridePythonAttrs (oldAttrs: {
