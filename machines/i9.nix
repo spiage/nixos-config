@@ -97,9 +97,11 @@ in {
   nix.settings = {
     substituters = [
       "https://nix-community.cachix.org"
+      "https://cache.nixos-cuda.org"
     ];
     trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
     ];
   };
 
@@ -166,8 +168,13 @@ in {
     #   backend = "podman";
     # };
   };
-  nixpkgs.config.cudaSupport = true;
-  nixpkgs.config.cudaVersion = "13";
+
+  # https://nixos.org/manual/nixpkgs/unstable/#cuda
+  allowUnfreePredicate = pkgs._cuda.lib.allowUnfreeCudaPredicate;
+  cudaCapabilities = [ "8.7" ]; # https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+  cudaForwardCompat = true;
+  cudaSupport = true;
+
   nixpkgs.overlays = [ (final: prev: {
     pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [ (pyfinal: pyprev: {
       rapidocr-onnxruntime = pyprev.rapidocr-onnxruntime.overridePythonAttrs (oldAttrs: {
