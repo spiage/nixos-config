@@ -171,7 +171,10 @@ in {
   nixpkgs.config = {
     # https://nixos.org/manual/nixpkgs/unstable/#cuda
     allowUnfreePredicate = pkgs._cuda.lib.allowUnfreeCudaPredicate;
-    cudaCapabilities = [ "8.7" ]; # https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+    # cudaCapabilities = [ "8.7" ]; # for my RTX 3090 # https://en.wikipedia.org/wiki/CUDA#GPUs_supported
+    #    error: cudaPackages_12_8.backendStdenv has failed assertions:
+    #    - Requested Jetson CUDA capabilities (["8.7"]) require hostPlatform (x86_64-linux) to be aarch64-linux
+    #    - Requested pre-Thor (10.1) Jetson CUDA capabilities (["8.7"]) require computed NVIDIA hostRedistSystem (linux-x86_64) to be linux-aarch64    
     cudaForwardCompat = true;
     cudaSupport = true;
   };
