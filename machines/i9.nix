@@ -4,17 +4,7 @@
   lib,
   ...
 }:
-let
-  # Обертка для ядра Jupyter, чтобы pip мог устанавливать пакеты в ~/.local
-  kernelWrapper = pkgs.writeShellScriptBin "ipykernel_launcher_wrapper" ''
-    unset PYTHONNOUSERSITE
-    unset VIRTUAL_ENV
-    export PIP_USER=true
-    export PATH="$HOME/.local/bin:$PATH"
-    exec ${config.services.jupyter.kernels.python-torch.package}/bin/python -m ipykernel_launcher "$@"
-  '';
-
-in {
+{
 
   networking.hostName = "i9"; # Define your hostname.
   networking.hostId = "2ae0c11a";
@@ -105,57 +95,7 @@ in {
     ];
   };
 
-  # services.jupyter = {
-
-  #   enable = false;
-  #   ip = "192.168.1.201";
-  #   user = "spiage";
-  #   password = "argon2:$argon2id$v=19$m=10240,t=10,p=8$AcayH3XHAMiWAERGhHF0XA$czsRPzyaZkroMPjgW1ULUwKHQchX9YTbF42E/xXTMnU";
-  #   notebookDir = "~/repos";
-  #   kernels = {
-  #     python-torch = {
-  #       display_name = "Python 3 (with PyTorch)";
-  #       language = "python";
-  #       package = pkgs.python3.withPackages (ps: with ps; [
-  #         torch
-  #         torchvision
-  #         transformers
-  #         ipykernel # ipykernel обязателен для работы Jupyter!
-  #         datasets
-  #         peft
-  #         bitsandbytes
-  #         accelerate
-  #         graphviz
-  #         # torchview
-  #         # torchviz
-  #         evaluate
-  #         huggingface-hub
-  #         fsspec
-  #         sklearn-compat # sklearn-deap is broken
-  #         # vllm # broken
-  #         ipywidgets 
-  #         matplotlib
-  #         seaborn
-  #         optuna
-  #         # catboost # catboost is broken
-  #         xgboost
-  #         # lightgbm # broken
-  #         numpy
-  #         pandas
-  #         pip
-  #         requests
-  #         scipy
-  #         scikit-learn
-  #       ]);
-  #       argv = [
-  #         "${kernelWrapper}/bin/ipykernel_launcher_wrapper"
-  #         "-f"
-  #         "{connection_file}"
-  #       ];
-  #     };
-  #   };
-  # };
-  virtualisation = {
+    virtualisation = {
     podman = {
       enable = true;
       dockerCompat = true;
@@ -203,62 +143,6 @@ in {
     #      nvidia-vaapi-driver
     # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
     libguestfs-with-appliance   
-    (python3.withPackages (
-      ps: with ps; [
-        pip
-        torch
-        fastapi
-        uvicorn
-        transformers
-        tensorflow
-        numpy
-        pandas
-        accelerate
-        requests
-      ]
-    )) 
-    # (python3.withPackages (
-    #   ps: with ps; [
-    #     notebook
-    #     jupyter
-    #     ipykernel
-    #     pip
-    #     requests
-    #     ipywidgets 
-
-    #     torch
-    #     torchvision
-    #     transformers
-    #     datasets
-    #     peft
-    #     bitsandbytes
-    #     accelerate
-    #     graphviz
-    #     # torchview
-    #     # torchviz
-    #     evaluate
-    #     huggingface-hub
-    #     fsspec
-    #     sklearn-compat # sklearn-deap is broken
-    #     # vllm # broken
-    #     matplotlib
-    #     seaborn
-    #     optuna
-    #     # catboost # catboost is broken
-    #     xgboost
-    #     # lightgbm # broken
-    #     numpy
-    #     pandas
-    #     scipy
-    #     scikit-learn
-    #     langchain 
-    #     sentence-transformers 
-    #     tqdm 
-    #     openpyxl 
-    #     openai 
-    #     langchain-community 
-    #   ]
-    # )) 
   ];
 
   environment.shellAliases = {
@@ -318,31 +202,6 @@ in {
     ];
   };
 
-  # swapDevices =
-  #   [ { device = "/dev/disk/by-uuid/3e86da97-ede3-4c0c-9dbf-9cdbc8550b44"; }
-  #   ];
-
-  # networking.interfaces.enp3s0.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlo1.useDHCP = lib.mkDefault true;
-  # networking = {
-  #   bridges = {
-  #     "lan".interfaces = [ "enp3s0" ]; #host.lan.devices;
-  #     #[ "enp3s0" "enp8s0" "enp9s0" "enp10s0" "enp11s0" ];
-  #     #"wan".interfaces = [ "enp3s0" ];
-  #   };
-  #   interfaces = {
-  #     lan.ipv4.addresses = [
-  #       {
-  #         address = "192.168.1.19"; #"${host.lan.ip}";
-  #         prefixLength = 16; #host.lan.prefix;
-  #       }
-  #     ];
-  #     # wan = {
-  #     #   useDHCP = false;
-  #     #   #   macAddress = host.wan.mac";
-  #     # };
-  #   };
-  # };
   networking = {
     bridges.br0.interfaces = [ "enp3s0" ];
     useDHCP = false;
@@ -359,7 +218,6 @@ in {
       #     OLLAMA_LLM_LIBRARY = "cpu";
       OLLAMA_HOST = "http://192.168.1.201:11434";
     };
-    # home = "/куда";
     host = "192.168.1.201";
     openFirewall = true;
 
