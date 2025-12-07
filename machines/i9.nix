@@ -211,8 +211,11 @@
 
   services.ollama = {
     enable = true;
-    package = (pkgs.ollama.override { acceleration = "cuda"; });
-    acceleration = "cuda";
+    # package = pkgs.ollama.override { acceleration = "cuda"; });
+    # acceleration = "cuda"; 
+#        - The option definition `services.ollama.acceleration' in `/nix/store/q6cnki835li5hf95py9wi5zfx68mka21-source/machines/i9.nix' no longer has any effect; please remove it.
+#        Set `services.ollama.package` to one of `pkgs.ollama[,-vulkan,-rocm,-cuda,-cpu]` instead.
+    package = pkgs.ollama-cuda;
     environmentVariables = {
       #     HIP_VISIBLE_DEVICES = "0,1";
       #     OLLAMA_LLM_LIBRARY = "cpu";
