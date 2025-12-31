@@ -13,7 +13,7 @@
   systemd.network = {
     links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [
       # Объединение через пробел
-      "f4:a4:54:87:66:ef" # Физический интерфейс
+      "2c:f0:5d:29:f6:01" # Физический интерфейс
     ];
 
     networks = {
@@ -32,17 +32,15 @@
   };
 
   boot.initrd.availableKernelModules = [
-    "ahci"
     "xhci_pci"
-    "pata_jmicron"
+    "ahci"
     "nvme"
     "usbhid"
     "usb_storage"
     "sd_mod"
-  ];
+  ];  
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [
-    "kvm-intel"
     "kvm-intel"
   ];
   boot.extraModulePackages = [ ];

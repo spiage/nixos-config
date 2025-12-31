@@ -10,6 +10,11 @@
   networking.hostId = "2ae0c11a";
 
   imports = [
+    inputs.nixos-hardware.nixosModules.common-cpu-amd
+    inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
+    inputs.nixos-hardware.nixosModules.common-pc
+    inputs.nixos-hardware.nixosModules.common-pc-ssd
+    inputs.vscode-server.nixosModules.default
     ../profiles/boot/systemd-boot.nix
     ../profiles/network/dns-client.nix
     ../profiles/common.nix
@@ -17,7 +22,7 @@
   systemd.network = {
     links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [
       # Объединение через пробел
-      "2c:f0:5d:29:f6:01" # Физический интерфейс
+      "9c:6b:00:aa:7e:38" # Физический интерфейс
     ];
 
     networks = {
@@ -36,22 +41,39 @@
   };
 
   services.xserver.videoDrivers = [ "nvidia" ];
-
+  boot.initrd.systemd.enable = true;
   boot.initrd.availableKernelModules = [
+    "nvme"
     "xhci_pci"
     "ahci"
-    "nvme"
+    "uas"
     "usbhid"
-    "usb_storage"
     "sd_mod"
   ];
-  boot.initrd.kernelModules = [ ];
-  # boot.kernelModules = [ "kvm-intel" ];
+  boot.supportedFilesystems = [
+    "ntfs"
+    "btrfs"
+    "ext4"
+    "xfs"
+    "zfs"
+  ];
   boot.extraModulePackages = [ ];
   boot = {
     blacklistedKernelModules = [ "nouveau" ];
-    kernelParams = [ "nvidia.NVreg_EnableGpuFirmware=1" ];
-    kernelModules = [ "nvidia_uvm" ];
+    kernelParams = [ 
+      "nvidia.NVreg_EnableGpuFirmware=1" 
+      "mitigations=off"
+      "preempt=full"
+      "nowatchdog"
+      "kernel.nmi_watchdog=0"
+    ];
+    kernelModules = [ 
+      "nvidia_uvm" 
+      "kvm-amd"
+      "bfq"
+      "mt7921e"
+      "k10temp"
+    ];
   };
 
   hardware = {

@@ -117,7 +117,6 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   #hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-  virtualisation.hypervGuest.enable = true;
 
   nix.settings.experimental-features = [
     "nix-command"
@@ -146,6 +145,7 @@
     "modesetting"
     "amdgpu"
   ];
+  virtualisation.hypervGuest.enable = true;
   services.desktopManager.plasma6.enable = true;
   services.displayManager.defaultSession = "plasmax11";
 
@@ -324,7 +324,7 @@
   };
 
   programs.partition-manager.enable = true;
-  services.dbus.packages = [ pkgs.kdePackages.kpmcore ];
+  # services.dbus.packages = [ pkgs.kdePackages.kpmcore ];
 
   services.gvfs.enable = true; # Browsing samba shares with GVFS
   # networking.firewall.extraCommands = ''iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns'';
@@ -337,6 +337,7 @@
   ];
 
   environment.systemPackages = with pkgs; [
+    
     # etcd # failed
     omnissa-horizon-client
     # flare
@@ -345,7 +346,7 @@
     # Временно отключил, в hyper-v не нужно
     # libreoffice-qt6-fresh
     # (pkgs.zoom-us.override { xdgDesktopPortalSupport = false; }) # zoom-us # zoom.us video conferencing application
-    # telegram-desktop
+    telegram-desktop
 
 
     # kcat не умеет в ssl # Generic non-JVM producer and consumer for Apache Kafka

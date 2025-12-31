@@ -129,7 +129,7 @@ in
   hardware.firmware = with pkgs; [ linux-firmware ];
   hardware.cpu.intel.updateMicrocode = true;
   hardware.bluetooth.enable = true;
-  hardware.usb-modeswitch.enable = true;
+  # hardware.usb-modeswitch.enable = true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   nixpkgs.config.allowUnfree = true;
@@ -265,6 +265,8 @@ in
   virtualisation.docker.extraOptions = ''--iptables=false --ip-masq=false -b br0'';
 
   environment.systemPackages = with pkgs; [
+
+    # nemu # Ncurses UI for QEMU
 
     ncdu # Disk usage analyzer with an ncurses interface
 
