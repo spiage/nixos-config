@@ -429,7 +429,7 @@
 
     #ciscoPacketTracer8 # Network simulation tool from Cisco
 
-    mongodb-compass
+    # mongodb-compass
 
     #_broken_ apache-airflow # Programmatically author, schedule and monitor data pipelines
 

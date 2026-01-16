@@ -61,15 +61,15 @@
   boot.extraModulePackages = [ ];
   boot = {
     blacklistedKernelModules = [ "nouveau" ];
-    kernelParams = [ 
-      "nvidia.NVreg_EnableGpuFirmware=1" 
+    kernelParams = [
+      "nvidia.NVreg_EnableGpuFirmware=1"
       "mitigations=off"
       "preempt=full"
       "nowatchdog"
       "kernel.nmi_watchdog=0"
     ];
-    kernelModules = [ 
-      "nvidia_uvm" 
+    kernelModules = [
+      "nvidia_uvm"
       "kvm-amd"
       "bfq"
       "mt7921e"
@@ -137,7 +137,7 @@
     # cudaCapabilities = [ "8.7" ]; # for my RTX 3090 # https://en.wikipedia.org/wiki/CUDA#GPUs_supported
     #    error: cudaPackages_12_8.backendStdenv has failed assertions:
     #    - Requested Jetson CUDA capabilities (["8.7"]) require hostPlatform (x86_64-linux) to be aarch64-linux
-    #    - Requested pre-Thor (10.1) Jetson CUDA capabilities (["8.7"]) require computed NVIDIA hostRedistSystem (linux-x86_64) to be linux-aarch64    
+    #    - Requested pre-Thor (10.1) Jetson CUDA capabilities (["8.7"]) require computed NVIDIA hostRedistSystem (linux-x86_64) to be linux-aarch64
     cudaForwardCompat = true;
     cudaSupport = true;
   };
@@ -148,24 +148,31 @@
         doInstallCheck = false;
         dontCheck = true;
       });
+#      langchain-community = pyprev.langchain-community.overridePythonAttrs (oldAttrs: {
+#        doCheck = false;
+#        doInstallCheck = false;
+#        dontCheck = true;
+#      });
     }) ];
-  }) ];  
+  }) ];
 
   environment.systemPackages = with pkgs; [
+    (python3.withPackages (ps: with ps; [ lxml ]))
+    sqlite
     dive
     podman-compose
     distrobox
     ollama
     (pkgs.gpufetch.override { cudaSupport = true; })
     nvtopPackages.nvidia
-    gwe
+#    gwe
     vulkan-tools
     zenith-nvidia
     nvitop
     uv
     #      nvidia-vaapi-driver
     # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
-    libguestfs-with-appliance   
+    libguestfs-with-appliance
   ];
 
   environment.shellAliases = {
@@ -235,7 +242,7 @@
   services.ollama = {
     enable = true;
     # package = pkgs.ollama.override { acceleration = "cuda"; });
-    # acceleration = "cuda"; 
+    # acceleration = "cuda";
 #        - The option definition `services.ollama.acceleration' in `/nix/store/q6cnki835li5hf95py9wi5zfx68mka21-source/machines/i9.nix' no longer has any effect; please remove it.
 #        Set `services.ollama.package` to one of `pkgs.ollama[,-vulkan,-rocm,-cuda,-cpu]` instead.
     package = pkgs.ollama-cuda;
