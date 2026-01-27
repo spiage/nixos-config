@@ -310,7 +310,7 @@ in
     restic
     rustic
     borgbackup
-    pika-backup
+    # pika-backup
     rclone
     smartmontools
     nut
