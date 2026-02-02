@@ -142,19 +142,19 @@
   services.xserver.xkb.layout = "us,ru";
   services.xserver.xkb.options = "grp:win_space_toggle";
   services.xserver.videoDrivers = [
-    "modesetting"
+    # "modesetting"
     "amdgpu"
   ];
-  virtualisation.hypervGuest.enable = true;
+  # virtualisation.hypervGuest.enable = true;
   services.desktopManager.plasma6.enable = true;
-  services.displayManager.defaultSession = "plasmax11";
+  # services.displayManager.defaultSession = "plasmax11";
 
   services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = false;
-  # services.displayManager.sddm.wayland.enable = true;
-  services.displayManager.sddm.settings.General.DisplayServer = "x11-user";
-  # services.displayManager.autoLogin.enable = true;
-  # services.displayManager.autoLogin.user = "spiage";
+  # services.displayManager.sddm.wayland.enable = false;
+  services.displayManager.sddm.wayland.enable = true;
+  # services.displayManager.sddm.settings.General.DisplayServer = "x11-user";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "spiage";
 
   # services.displayManager.cosmic-greeter.enable = true;
   # services.desktopManager.cosmic.enable = true;
@@ -210,15 +210,16 @@
   };
 
   # чтобы избежать "Too many open files"
-  security.pam.loginLimits = [
-    {
-      domain = "*";
-      type = "soft";
-      item = "nofile";
-      value = "65536";
-    }
-  ];
-
+  systemd.user.services."user@".serviceConfig.LimitNOFILE = 65536;
+  # security.pam.loginLimits = [
+  #   {
+  #     domain = "*";
+  #     type = "soft";
+  #     item = "nofile";
+  #     value = "65536";
+  #   }
+  # ];
+  
   virtualisation.libvirtd.allowedBridges = [
     "virbr1"
     "virbr0"
