@@ -13,7 +13,7 @@
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-amd
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
-    inputs.nixos-hardware.nixosModules.common-cpu-amd-raphael-igpu
+    # inputs.nixos-hardware.nixosModules.common-cpu-amd-raphael-igpu 
     inputs.nixos-hardware.nixosModules.common-gpu-amd
     inputs.nixos-hardware.nixosModules.common-hidpi
     inputs.nixos-hardware.nixosModules.common-pc
@@ -44,6 +44,7 @@
         networkConfig = {
           DNS = "192.168.1.18"; # DNS-сервер q1
           Gateway = "192.168.1.1";
+          Domains = ["~."];
         };
       };
     };
@@ -148,6 +149,7 @@
   # virtualisation.hypervGuest.enable = true;
   services.desktopManager.plasma6.enable = true;
   # services.displayManager.defaultSession = "plasmax11";
+  services.desktopManager.plasma6.enableQt5Integration = false;
 
   services.displayManager.sddm.enable = true;
   # services.displayManager.sddm.wayland.enable = false;
@@ -210,15 +212,21 @@
   };
 
   # чтобы избежать "Too many open files"
-  systemd.user.services."user@".serviceConfig.LimitNOFILE = 65536;
-  # security.pam.loginLimits = [
-  #   {
-  #     domain = "*";
-  #     type = "soft";
-  #     item = "nofile";
-  #     value = "65536";
-  #   }
-  # ];
+  # Глобальный лимит для всей пользовательской сессии systemd
+  systemd.user.extraConfig = ''
+    DefaultLimitNOFILE=65536
+  '';
+  systemd.services.nix-daemon.serviceConfig = {
+    LimitNOFILE = 1048576;
+  };
+  security.pam.loginLimits = [
+    {
+      domain = "*";
+      type = "soft";
+      item = "nofile";
+      value = "65536";
+    }
+  ];
   
   virtualisation.libvirtd.allowedBridges = [
     "virbr1"
@@ -338,6 +346,14 @@
   ];
 
   environment.systemPackages = with pkgs; [
+
+    inputs.max-messenger.packages.x86_64-linux.default
+
+    microsoft-edge
+
+    kdePackages.plasma-browser-integration
+
+    wl-clipboard-rs
     
     # etcd # failed
     omnissa-horizon-client
@@ -426,7 +442,7 @@
 
     iotop
 
-    xorg.xhost
+    xhost
 
     #ciscoPacketTracer8 # Network simulation tool from Cisco
 

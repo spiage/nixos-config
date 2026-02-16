@@ -5,6 +5,8 @@
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   inputs.vscode-server.url = "github:nix-community/nixos-vscode-server";
   inputs.vscode-server.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.max-messenger.url = "github:spiage/max-messenger";
+  inputs.max-messenger.inputs.nixpkgs.follows = "nixpkgs";
   outputs =
     {
       self,
@@ -29,6 +31,7 @@
         "i9"
         "i7"
         "q1"
+        "n1"
       ];
 
     in

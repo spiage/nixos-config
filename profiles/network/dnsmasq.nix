@@ -81,7 +81,7 @@ in
         domain-needed = true;
         bogus-priv = true;
         expand-hosts = true;
-        local = "/${cfg.domain}/";
+        # local = "/${cfg.domain}/";
 
         # DHCP-настройки
         interface = cfg.interface;
@@ -90,7 +90,7 @@ in
           "option:dns-server,192.168.1.18" # IP вашего DNS-сервера
           "option:domain-search,k8s.local" # Домен для поиска
           "option:router,${cfg.gateway}"
-          "option:dns-server,${cfg.gateway}" # Используем роутер как DNS
+          # "option:dns-server,${cfg.gateway}" # Используем роутер как DNS
         ];
         dhcp-host = map (
           host:

@@ -63,7 +63,7 @@ in
 
   # Общие настройки для всех хостов
   networking.domain = homeDomain;
-  networking.search = [ homeDomain ];
+  networking.search = [ "~." homeDomain ];
   networking.useNetworkd = true; # Полный переход на systemd-networkd
   networking.useDHCP = false;
   systemd.network = {
@@ -222,42 +222,42 @@ in
   # ];
 
   services.rpcbind.enable = true; # needed for NFS
-  systemd.mounts =
-    let
-      commonMountOptions = {
-        type = "nfs";
-        mountConfig = {
-          Options = "noatime";
-        };
-      };
+  # systemd.mounts =
+  #   let
+  #     commonMountOptions = {
+  #       type = "nfs";
+  #       mountConfig = {
+  #         Options = "noatime";
+  #       };
+  #     };
 
-    in
+  #   in
 
-    [
-      (
-        commonMountOptions
-        // {
-          what = "j4:/vpool";
-          where = "/mnt/nfs";
-        }
-      )
-    ];
+  #   [
+  #     (
+  #       commonMountOptions
+  #       // {
+  #         what = "j4:/vpool";
+  #         where = "/mnt/nfs";
+  #       }
+  #     )
+  #   ];
 
-  systemd.automounts =
-    let
-      commonAutoMountOptions = {
-        wantedBy = [ "multi-user.target" ];
-        automountConfig = {
-          TimeoutIdleSec = "600";
-        };
-      };
+  # systemd.automounts =
+  #   let
+  #     commonAutoMountOptions = {
+  #       wantedBy = [ "multi-user.target" ];
+  #       automountConfig = {
+  #         TimeoutIdleSec = "600";
+  #       };
+  #     };
 
-    in
+  #   in
 
-    [
-      (commonAutoMountOptions // { where = "/mnt/nfs"; })
-      # (commonAutoMountOptions // { where = "/mnt/oyomot"; })
-    ];
+  #   [
+  #     (commonAutoMountOptions // { where = "/mnt/nfs"; })
+  #     # (commonAutoMountOptions // { where = "/mnt/oyomot"; })
+  #   ];
 
   services.rsyncd.enable = true;
   services.openssh.enable = true;
