@@ -347,6 +347,10 @@
 
   environment.systemPackages = with pkgs; [
 
+    mission-center
+
+    (kdePackages.spectacle.override { tesseractLanguages = [ "eng" "rus" ]; })
+
     inputs.max-messenger.packages.x86_64-linux.default
 
     microsoft-edge

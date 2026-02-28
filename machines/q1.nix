@@ -66,6 +66,12 @@
         name = "w11";
         description = "core";
       }
+      {
+        mac = "c0:18:85:40:41:33";
+        ip = "192.168.1.17";
+        name = "aod270";
+        description = "core";
+      }
       # Виртуальные машины
       {
         mac = "52:54:00:80:c0:93";
