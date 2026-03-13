@@ -14,7 +14,7 @@
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sdhci_pci" ];
   boot.initrd.kernelModules = [ "i915" ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_latest;
   boot.kernelModules = [ "kvm-intel" ];
 
   fileSystems."/" = {
@@ -129,5 +129,5 @@
 
   services.openssh.enable = true;
 
-  system.stateVersion = "24.11";
+  system.stateVersion = lib.mkForce "24.11";
 }

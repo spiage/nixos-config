@@ -140,5 +140,5 @@
 
   services.openssh.enable = true;
 
-  system.stateVersion = "23.05";
+  system.stateVersion = lib.mkForce "23.05";
 }

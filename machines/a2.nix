@@ -25,7 +25,7 @@
 
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";
-  boot.kernelPackages = pkgs.linuxPackages_6_1; # GMA500: blackscreen на новых ядрах
+  boot.kernelPackages = lib.mkForce pkgs.linuxPackages_6_1; # GMA500: blackscreen на новых ядрах
 
   # Blacklist i915 для GMA500
   boot.blacklistedKernelModules = [ "i915" ];
@@ -64,17 +64,15 @@
     };
     displayManager.lightdm.enable = true;
     displayManager.sessionCommands = ''
-      ${pkgs.xorg.xset}/bin/xset s off -dpms
+      ${pkgs.xset}/bin/xset s off -dpms
     '';
+    xkb.layout = "us,ru";
+    xkb.options = "grp:win_space_toggle";
   };
 
   services.displayManager.defaultSession = "none+i3";
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "spiage";
-
-  # Отключаем лишнее из laptop.nix (TLP, сенсоры)
-  services.tlp.enable = false;
-  hardware.sensor.iio.enable = false;
 
   # Шрифты
   fonts.fontDir.enable = true;
@@ -159,5 +157,5 @@
   zramSwap.memoryPercent = 40;
   services.fstrim.enable = true;
 
-  system.stateVersion = "23.11";
+  system.stateVersion = lib.mkForce "23.11";
 }
