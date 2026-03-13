@@ -3,7 +3,7 @@
   # Профиль для ноутбуков с WiFi
 
   # Отключаем systemd-networkd в пользу NetworkManager
-  networking.useNetworkd = false;
+  networking.useNetworkd = lib.mkForce false;
   networking.networkmanager.enable = true;
 
   # Управление питанием
