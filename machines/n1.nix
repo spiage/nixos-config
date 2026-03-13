@@ -40,10 +40,10 @@
     "btrfs"
     "ext4"
     "xfs"
-    "zfs"
+    # "zfs"
   ];
-  boot.zfs.extraPools = [ "store_pool" ];
-  services.zfs.autoScrub.enable = true;
+  # boot.zfs.extraPools = [ "store_pool" ];
+  # services.zfs.autoScrub.enable = true;
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/09acbb27-663a-412d-939d-2c86130e634b";

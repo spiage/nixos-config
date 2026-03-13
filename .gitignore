@@ -1,1 +1,11 @@
-/result
+# Qwen Code
+.qwen/
+QWEN.md
+
+# Nix
+result
+result-*
+flake.lock
+
+# Scripts (temp files)
+scripts/*.deb

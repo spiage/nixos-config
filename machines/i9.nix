@@ -56,7 +56,7 @@
     "btrfs"
     "ext4"
     "xfs"
-    "zfs"
+    # "zfs"
   ];
   boot.extraModulePackages = [ ];
   boot = {

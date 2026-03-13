@@ -42,6 +42,12 @@
         name = "a7";
         description = "core";
       }
+      {
+        mac = "f4:a4:54:87:66:ef";
+        ip = "192.168.1.144";
+        name = "f1";
+        description = "core";
+      }
       # {
       #   mac = "2c:f0:5d:29:f6:01";
       #   ip = "192.168.1.201";

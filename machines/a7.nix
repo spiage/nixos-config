@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   inputs,
   lib,
@@ -77,7 +76,7 @@
     "btrfs"
     "ext4"
     "xfs"
-    "zfs"
+    # "zfs"
   ];
   boot.kernelModules = [
     "kvm-amd"
@@ -85,8 +84,8 @@
     "mt7921e"
     "k10temp"
   ];
-  boot.zfs.extraPools = [ "store_pool" ];
-  services.zfs.autoScrub.enable = true;
+  # boot.zfs.extraPools = [ "store_pool" ];
+  # services.zfs.autoScrub.enable = true;
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/26aceccc-68ac-40b5-9967-800602c65cc1";
@@ -274,7 +273,28 @@
       in
       [ "${automount_opts},credentials=/etc/nixos/smb-secrets,uid=1000,gid=100" ];
   };
-
+  fileSystems."/mnt/store/zstd19" = {
+    device = "//f1.k8s.local/downloads";
+    fsType = "cifs";
+    options = let
+      uid = "1000"; 
+      gid = "0";
+    in [
+      "noauto"
+      "_netdev"
+      "nofail"
+      "noperm" 
+      "x-systemd.automount"
+      "x-systemd.device-timeout=10"
+      "x-systemd.mount-timeout=10"
+      "credentials=/etc/smb-secrets"
+      "uid=${uid}"
+      "gid=${gid}"
+      "iocharset=utf8"
+      "file_mode=0664"
+      "dir_mode=0775"
+    ];
+  };
   # services.k3s = {
   #   enable = true;
   #   role = "server";
@@ -292,15 +312,15 @@
   # };
   # networking.firewall.allowedTCPPorts = [ 2049 ]; # открыть порт NFS
 
-  services.samba = {
-    settings = {
-      "testshare" = {
-        path = "/mnt/store/zstd19";
-        writable = "yes";
-        comment = "Hello World!";
-      };
-    };
-  };
+  # services.samba = {
+  #   settings = {
+  #     "testshare" = {
+  #       path = "/mnt/store/zstd19";
+  #       writable = "yes";
+  #       comment = "Hello World!";
+  #     };
+  #   };
+  # };
 
   # systemd.services.zfs-mount = {
   #   serviceConfig.ExecStartPost = [
@@ -516,34 +536,34 @@
     oh-my-git
 
     vscode
-    vscode-extensions.ms-toolsai.jupyter
-    vscode-extensions.bbenoist.nix
-    vscode-extensions.github.copilot
+    # vscode-extensions.ms-toolsai.jupyter
+    # vscode-extensions.bbenoist.nix
+    # vscode-extensions.github.copilot
     # vscode-extensions.ms-python.python
-    vscode-extensions.hookyqr.beautify
-    vscode-extensions.ms-vscode.cpptools
-    vscode-extensions.jnoortheen.nix-ide
-    vscode-extensions.ms-dotnettools.csharp
-    vscode-extensions.kubukoz.nickel-syntax
-    vscode-extensions.yzhang.markdown-all-in-one
-    vscode-extensions.github.github-vscode-theme
-    vscode-extensions.brettm12345.nixfmt-vscode
-    vscode-extensions.b4dm4n.vscode-nixpkgs-fmt
-    vscode-extensions.mads-hartmann.bash-ide-vscode
-    vscode-extensions.davidanson.vscode-markdownlint
-    vscode-extensions.ms-vscode-remote.remote-ssh
-    vscode-extensions.foam.foam-vscode
-    vscode-extensions.bierner.markdown-mermaid
-    vscode-extensions.bierner.docs-view
-    vscode-extensions.bierner.emojisense
-    vscode-extensions.bierner.markdown-checkbox
-    vscode-extensions.bierner.markdown-emoji
-    vscode-extensions.shd101wyy.markdown-preview-enhanced
-    vscode-extensions.tomoki1207.pdf
-    vscode-extensions.alefragnani.bookmarks
-    vscode-extensions.alefragnani.project-manager
-    vscode-extensions.jebbs.plantuml
-    vscode-extensions.gruntfuggly.todo-tree
+    # vscode-extensions.hookyqr.beautify
+    # vscode-extensions.ms-vscode.cpptools
+    # vscode-extensions.jnoortheen.nix-ide
+    # vscode-extensions.ms-dotnettools.csharp
+    # vscode-extensions.kubukoz.nickel-syntax
+    # vscode-extensions.yzhang.markdown-all-in-one
+    # vscode-extensions.github.github-vscode-theme
+    # vscode-extensions.brettm12345.nixfmt-vscode
+    # vscode-extensions.b4dm4n.vscode-nixpkgs-fmt
+    # vscode-extensions.mads-hartmann.bash-ide-vscode
+    # vscode-extensions.davidanson.vscode-markdownlint
+    # vscode-extensions.ms-vscode-remote.remote-ssh
+    # vscode-extensions.foam.foam-vscode
+    # vscode-extensions.bierner.markdown-mermaid
+    # vscode-extensions.bierner.docs-view
+    # vscode-extensions.bierner.emojisense
+    # vscode-extensions.bierner.markdown-checkbox
+    # vscode-extensions.bierner.markdown-emoji
+    # vscode-extensions.shd101wyy.markdown-preview-enhanced
+    # vscode-extensions.tomoki1207.pdf
+    # vscode-extensions.alefragnani.bookmarks
+    # vscode-extensions.alefragnani.project-manager
+    # vscode-extensions.jebbs.plantuml
+    # vscode-extensions.gruntfuggly.todo-tree
 
     nixd
     nil
@@ -574,8 +594,6 @@
     lsof
 
     ffmpeg # (pkgs.ffmpeg.override { withOptimisations = true; withFullDeps = true; })
-
-    # neofetch
 
     #python311
     (python3.withPackages (
@@ -618,7 +636,7 @@
     masterpdfeditor4
     # terminator
 
-    helvum
+    crosspipe #'helvum' has been removed as it was unmaintained upstream and relied on a vulnerable dependency. Consider using 'crosspipe' instead.
     qpwgraph
   ];
 

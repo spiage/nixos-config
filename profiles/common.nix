@@ -7,17 +7,17 @@
 }:
 
 let
-  zfsCompatibleKernelPackages = lib.filterAttrs (
-    name: kernelPackages:
-    (builtins.match "linux_[0-9]+_[0-9]+" name) != null
-    && (builtins.tryEval kernelPackages).success
-    && (!kernelPackages.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken)
-  ) pkgs.linuxKernel.packages;
-  latestKernelPackage = lib.last (
-    lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
-      builtins.attrValues zfsCompatibleKernelPackages
-    )
-  );
+  # zfsCompatibleKernelPackages = lib.filterAttrs (
+  #   name: kernelPackages:
+  #   (builtins.match "linux_[0-9]+_[0-9]+" name) != null
+  #   && (builtins.tryEval kernelPackages).success
+  #   && (!kernelPackages.${config.boot.zfs.package.kernelModuleAttribute}.meta.broken)
+  # ) pkgs.linuxKernel.packages;
+  # latestKernelPackage = lib.last (
+  #   lib.sort (a: b: (lib.versionOlder a.kernel.version b.kernel.version)) (
+  #     builtins.attrValues zfsCompatibleKernelPackages
+  #   )
+  # );
 
   # Используем существующий домен k8s.local
   homeDomain = "k8s.local";
@@ -35,6 +35,7 @@ let
     "192.168.1.15  i7 i7.${homeDomain}"
     "192.168.1.16  j4 j4.${homeDomain}"
     "192.168.1.18  q1 q1.${homeDomain}"
+    "192.168.1.144 f1 f1.${homeDomain}"
   ];
 
   # Виртуальные машины (добавляются в extraHosts)
@@ -118,9 +119,9 @@ in
     "btrfs"
     "ext4"
     "xfs"
-    "zfs"
+    # "zfs"
   ];
-  boot.kernelPackages = latestKernelPackage;
+  boot.kernelPackages = pkgs.linuxPackages_latest; # latestKernelPackage;
   boot.swraid.enable = false;
   boot.initrd.systemd.enable = true;
   boot.loader.systemd-boot.memtest86.enable = true;
@@ -206,6 +207,7 @@ in
     enable = true;
     onShutdown = "shutdown";
     qemu.package = pkgs.qemu_kvm;
+    qemu.swtpm.enable = true;
     allowedBridges = [
       "virbr1"
       "virbr0"
@@ -287,7 +289,6 @@ in
     jq
     lm_sensors
     lsof
-    neofetch
     fastfetch
     btop
     htop
