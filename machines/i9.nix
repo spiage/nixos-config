@@ -42,7 +42,6 @@
   };
 
   services.xserver.videoDrivers = [ "nvidia" ];
-  boot.initrd.systemd.enable = true;
   boot.initrd.availableKernelModules = [
     "nvme"
     "xhci_pci"

@@ -62,7 +62,6 @@
     "nowatchdog"
     "kernel.nmi_watchdog=0"
   ];
-  boot.initrd.systemd.enable = true;
   boot.initrd.availableKernelModules = [
     "nvme"
     "xhci_pci"
