@@ -35,13 +35,6 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  boot.supportedFilesystems = [
-    "ntfs"
-    "btrfs"
-    "ext4"
-    "xfs"
-    # "zfs"
-  ];
   # boot.zfs.extraPools = [ "store_pool" ];
   # services.zfs.autoScrub.enable = true;
 

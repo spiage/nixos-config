@@ -51,13 +51,6 @@
     "usbhid"
     "sd_mod"
   ];
-  boot.supportedFilesystems = [
-    "ntfs"
-    "btrfs"
-    "ext4"
-    "xfs"
-    # "zfs"
-  ];
   boot.extraModulePackages = [ ];
   boot = {
     blacklistedKernelModules = [ "nouveau" ];

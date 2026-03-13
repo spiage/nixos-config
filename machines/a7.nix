@@ -71,13 +71,6 @@
     "usbhid"
     "sd_mod"
   ];
-  boot.supportedFilesystems = [
-    "ntfs"
-    "btrfs"
-    "ext4"
-    "xfs"
-    # "zfs"
-  ];
   boot.kernelModules = [
     "kvm-amd"
     "bfq"
@@ -118,14 +111,6 @@
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   #hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-  # nix.package = pkgs.nixVersions.latest;
-
-  hardware.firmware = with pkgs; [ linux-firmware ];
   hardware.graphics = {
     enable = lib.mkDefault true;
     enable32Bit = lib.mkForce false;
@@ -250,8 +235,6 @@
   # virtualisation.docker.enable = true;
   # # virtualisation.docker.extraOptions =
   # #   ''--iptables=false --ip-masq=false -b br0'';
-
-  nixpkgs.config.allowUnfree = true;
 
   programs.kdeconnect.enable = true;
 

@@ -91,12 +91,7 @@
     pulse.enable = true;
   };
 
-  # Пользователи
-  users.users.spiage = {
-    isNormalUser = true;
-    description = "spiage";
-    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "vboxusers" "video" "docker" ];
-  };
+  # Пользователи определяются в common.nix
 
   # Пакеты
   environment.systemPackages = with pkgs; [
@@ -126,8 +121,6 @@
     lm_sensors
     ffmpeg
   ];
-
-  services.openssh.enable = true;
 
   system.stateVersion = lib.mkForce "24.11";
 }

@@ -150,9 +150,6 @@
     fastfetch
   ];
 
-  networking.firewall.allowedTCPPorts = [ 5900 ];
-  services.openssh.enable = true;
-
   zramSwap.enable = true;
   zramSwap.memoryPercent = 40;
   services.fstrim.enable = true;

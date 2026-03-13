@@ -10,7 +10,6 @@
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.supportedFilesystems = [ "ntfs" "btrfs" "ext4" "xfs" ];
 
   boot.initrd.availableKernelModules = [ "ehci_pci" "ahci" "xhci_pci" "usb_storage" "sd_mod" ];
   boot.kernelModules = [ "kvm-intel" ];
@@ -85,12 +84,6 @@
   };
 
   # Пользователи
-  users.users.spiage = {
-    isNormalUser = true;
-    description = "spiage";
-    extraGroups = [ "networkmanager" "wheel" "scanner" "lp" "audio" "incus-admin" "kvm" "libvirtd" "vboxusers" "video" ];
-  };
-
   users.users.taka = {
     isNormalUser = true;
     description = "taka";
@@ -137,8 +130,6 @@
     pciutils
     zenstates
   ];
-
-  services.openssh.enable = true;
 
   system.stateVersion = lib.mkForce "23.05";
 }
