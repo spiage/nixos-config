@@ -263,6 +263,8 @@ in
 
   services.rsyncd.enable = true;
   services.openssh.enable = true;
+  services.fwupd.enable = true;
+  programs.kdeconnect.enable = true;
 
   virtualisation.docker.extraOptions = ''--iptables=false --ip-masq=false -b br0'';
 

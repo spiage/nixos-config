@@ -12,7 +12,7 @@
   imports = [
     inputs.nixos-hardware.nixosModules.common-cpu-amd
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
-    # inputs.nixos-hardware.nixosModules.common-cpu-amd-raphael-igpu 
+    # inputs.nixos-hardware.nixosModules.common-cpu-amd-raphael-igpu
     inputs.nixos-hardware.nixosModules.common-gpu-amd
     inputs.nixos-hardware.nixosModules.common-hidpi
     inputs.nixos-hardware.nixosModules.common-pc
@@ -22,6 +22,12 @@
     ../profiles/common.nix
     ../profiles/network/dns-client.nix
     ../profiles/storage/smb-server.nix
+    ../profiles/desktop/fonts.nix
+    ../profiles/desktop/plasma6.nix
+    ../profiles/desktop/printing.nix
+    ../profiles/desktop/pipewire.nix
+    ../profiles/desktop/packages.nix
+    ../profiles/hardware/graphics.nix
   ];
 
   services.vscode-server.enable = true;
@@ -110,39 +116,12 @@
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   #hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
-  hardware.graphics = {
-    enable = lib.mkDefault true;
-    enable32Bit = lib.mkForce false;
-  };
-  hardware.sensor.iio.enable = true;
-
-  # # Физический интерфейс (enp14s0) → eth0
-  # services.udev.extraRules = ''
-  #   SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="74:56:3c:78:21:ad", NAME="eth0" SYMLINK+="enp14s0-physical"
-  #   SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:15:5d:01:02:00", NAME="eth0" SYMLINK+="hv-eth0-virtual"
-  # '';
-
-  services.xserver.enable = true;
-  services.xserver.xkb.layout = "us,ru";
-  services.xserver.xkb.options = "grp:win_space_toggle";
+  # AMD GPU драйвер
   services.xserver.videoDrivers = [
     # "modesetting"
     "amdgpu"
   ];
   # virtualisation.hypervGuest.enable = true;
-  services.desktopManager.plasma6.enable = true;
-  # services.displayManager.defaultSession = "plasmax11";
-  services.desktopManager.plasma6.enableQt5Integration = false;
-
-  services.displayManager.sddm.enable = true;
-  # services.displayManager.sddm.wayland.enable = false;
-  services.displayManager.sddm.wayland.enable = true;
-  # services.displayManager.sddm.settings.General.DisplayServer = "x11-user";
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "spiage";
-
-  # services.displayManager.cosmic-greeter.enable = true;
-  # services.desktopManager.cosmic.enable = true;
 
   services.xrdp = {
     enable = true;
@@ -153,46 +132,6 @@
 
   services.libinput.enable = true;
   # services.fwupd.enable = true;
-
-  fonts.fontDir.enable = true;
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-color-emoji
-    liberation_ttf
-    fira-code
-    fira-code-symbols
-    mplus-outline-fonts.githubRelease
-    dina-font
-    proggyfonts
-    terminus_font
-    nerd-fonts.terminess-ttf
-    cascadia-code
-    dejavu_fonts
-    freefont_ttf
-    gyre-fonts # TrueType substitutes for standard PostScript fonts
-    liberation_ttf
-    unifont
-    noto-fonts-color-emoji
-  ];
-
-  #scanner
-  hardware.sane.enable = true;
-  hardware.sane.extraBackends = [ pkgs.sane-airscan ];
-  services.avahi.enable = true;
-  services.avahi.nssmdns4 = true;
-  services.avahi.ipv6 = false;
-  ###
-
-  services.printing.enable = true;
-
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-  };
 
   # чтобы избежать "Too many open files"
   # Глобальный лимит для всей пользовательской сессии systemd
@@ -234,8 +173,6 @@
   # virtualisation.docker.enable = true;
   # # virtualisation.docker.extraOptions =
   # #   ''--iptables=false --ip-masq=false -b br0'';
-
-  programs.kdeconnect.enable = true;
 
   programs.zsh.enable = true;
   programs.starship.enable = true;
@@ -349,6 +286,11 @@
 
   environment.systemPackages = with pkgs; [
 
+    mdbook
+    mdbook-mermaid
+
+    qwen-code
+
     mission-center
 
     (kdePackages.spectacle.override { tesseractLanguages = [ "eng" "rus" ]; })
@@ -369,7 +311,6 @@
     # Временно отключил, в hyper-v не нужно
     # libreoffice-qt6-fresh
     # (pkgs.zoom-us.override { xdgDesktopPortalSupport = false; }) # zoom-us # zoom.us video conferencing application
-    telegram-desktop
 
 
     # kcat не умеет в ssl # Generic non-JVM producer and consumer for Apache Kafka
@@ -440,8 +381,6 @@
     # Programs provided
     # cdda2mp3 cdda2ogg cdrecord devdump dirsplit genisoimage icedax isodebug isodump isoinfo isovfy mkisofs netscsid pitchplay readmult readom wodim
 
-    usbutils # Tools for working with USB devices, such as lsusb
-
     # runc
 
     cifs-utils
@@ -482,7 +421,6 @@
     inputs.yandex-browser.packages.x86_64-linux.yandex-browser-stable
     # inputs.ki-editor.packages.x86_64-linux.default
     # yandex-browser
-    google-chrome
 
     # inputs.nixpkgs-unstable.legacyPackages.${system}.telegram-desktop
 
@@ -517,7 +455,6 @@
 
     oh-my-git
 
-    vscode
     # vscode-extensions.ms-toolsai.jupyter
     # vscode-extensions.bbenoist.nix
     # vscode-extensions.github.copilot
@@ -552,19 +489,7 @@
     tree
 
     # partition-manager # inputs.kde2nix.packages.x86_64-linux.partitionmanager
-    kdePackages.plasma-workspace-wallpapers # libsForQt5.plasma-workspace-wallpapers #collision with konsole from plasma 5 inputs.kde2nix.packages.x86_64-linux.plasma-workspace-wallpapers
-    pavucontrol # libsForQt5.kmix deprecated #marked broken inputs.kde2nix.packages.x86_64-linux.kmix
-    # remmina # libsForQt5.krdc !vvv remmina is faster vvv!
-    # skanpage
-    kdePackages.ktorrent
-    mpv
-    kdePackages.dragon
-    kdePackages.kcalc
-    kdePackages.skanpage
-    #kmines
-    #libsForQt5.kpat # inputs.kde2nix.packages.x86_64-linux.kpat
     # kdePackages.discover # discover #fail with plasma 6.0.4
-    kdePackages.konsole
     # kdePackages.kmail
     # kdePackages.kontact
     # kdePackages.merkuro
@@ -573,10 +498,6 @@
     # dpkg
     # debootstrap
 
-    lsof
-
-    ffmpeg # (pkgs.ffmpeg.override { withOptimisations = true; withFullDeps = true; })
-
     #python311
     (python3.withPackages (
       ps: with ps; [
@@ -584,6 +505,9 @@
         jupyter
         pip
         requests
+        mkdocs
+        mkdocs-material
+        mkdocs-mermaid2-plugin
       ]
     )) # !!! waiting for https://github.com/NixOS/nixpkgs/pull/285959
     # gcc
@@ -612,7 +536,6 @@
     # ventoy-full
 
     nut
-    lm_sensors
 
     masterpdfeditor
     masterpdfeditor4

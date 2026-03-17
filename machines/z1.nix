@@ -3,13 +3,16 @@
   imports = [
     ../profiles/common.nix
     ../profiles/laptop.nix
+    ../profiles/boot/systemd-boot.nix
+    ../profiles/desktop/fonts.nix
+    ../profiles/desktop/plasma6.nix
+    ../profiles/desktop/printing.nix
+    ../profiles/desktop/pipewire.nix
+    ../profiles/desktop/packages.nix
+    ../profiles/hardware/graphics.nix
   ];
 
   networking.hostName = "z1";
-
-  # Bootloader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sdhci_pci" ];
   boot.initrd.kernelModules = [ "i915" ];
@@ -40,86 +43,10 @@
     ];
   };
 
-  # Датчики
-  hardware.sensor.iio.enable = true;
-
   # Plasma 6 + Wayland
-  services.xserver.enable = true;
   services.xserver.videoDrivers = [ "modesetting" ];
-  services.xserver.xkb.layout = "us,ru";
-  services.xserver.xkb.options = "grp:win_space_toggle";
-
-  services.desktopManager.plasma6.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "spiage";
-
-  services.libinput.enable = true;
-  services.fwupd.enable = true;
-
-  # Шрифты
-  fonts.fontDir.enable = true;
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-color-emoji
-    liberation_ttf
-    fira-code
-    fira-code-symbols
-    mplus-outline-fonts.githubRelease
-    dina-font
-    proggyfonts
-    terminus_font
-    cascadia-code
-  ];
-
-  # Принтеры и сканеры
-  hardware.sane.enable = true;
-  hardware.sane.extraBackends = [ pkgs.sane-airscan ];
-  services.avahi.enable = true;
-  services.avahi.nssmdns4 = true;
-  services.printing.enable = true;
-
-  # Звук
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-  };
 
   # Пользователи определяются в common.nix
-
-  # Пакеты
-  environment.systemPackages = with pkgs; [
-    inxi
-    hw-probe
-    nix-tree
-    remmina
-    usbutils
-    vlc
-    nvd
-    btop
-    fastfetch
-    bridge-utils
-    wget
-    inetutils
-    mc
-    git
-    google-chrome
-    kdePackages.plasma-workspace-wallpapers
-    pavucontrol
-    kdePackages.ktorrent
-    mpv
-    kdePackages.dragon
-    kdePackages.kcalc
-    kdePackages.skanpage
-    kdePackages.konsole
-    lm_sensors
-    ffmpeg
-  ];
 
   system.stateVersion = lib.mkForce "24.11";
 }
