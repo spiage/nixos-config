@@ -10,10 +10,16 @@
   services.desktopManager.plasma6.enable = true;
   services.desktopManager.plasma6.enableQt5Integration = false;
 
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
+  # services.displayManager.sddm.enable = true;
+  # services.displayManager.sddm.wayland.enable = true;
+  services.displayManager.plasma-login-manager.enable = true;
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "spiage";
 
   services.libinput.enable = true;
+
+  programs.kdeconnect.enable = true;
+
+  services.orca.enable = false;
+
 }

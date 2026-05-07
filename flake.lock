@@ -39,6 +39,24 @@
         "systems": "systems_2"
       },
       "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "flake-utils_3": {
+      "inputs": {
+        "systems": "systems_3"
+      },
+      "locked": {
         "lastModified": 1681202837,
         "narHash": "sha256-H+Rh19JDwRtpVPAWp64F+rlEtxUWBAQW28eAi3SRSzg=",
         "owner": "numtide",
@@ -60,11 +78,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773729116,
-        "narHash": "sha256-nxxgXjVyF7WXVZfFIL+5XtWym5BNT7LD98ko7j6rEjk=",
+        "lastModified": 1777572548,
+        "narHash": "sha256-BFgsb6JIcxiAj4kvoGweuhmomaYUwpeBEsQH6fICgs4=",
         "owner": "spiage",
         "repo": "max-messenger",
-        "rev": "6974a4732a06017f76b6b57aef773a9e82aa74b9",
+        "rev": "105211164c6b9686481f820227643ed85de0ea19",
         "type": "github"
       },
       "original": {
@@ -75,11 +93,11 @@
     },
     "nixos-hardware": {
       "locked": {
-        "lastModified": 1773533765,
-        "narHash": "sha256-qonGfS2lzCgCl59Zl63jF6dIRRpvW3AJooBGMaXjHiY=",
+        "lastModified": 1778143761,
+        "narHash": "sha256-lkesY6x2X2qxlqLM7CT2iM/0rP2JB7fruPN3h8POXmI=",
         "owner": "NixOS",
         "repo": "nixos-hardware",
-        "rev": "f8e82243fd601afb9f59ad230958bd073795cbfe",
+        "rev": "3bcaa367d4c550d687a17ac792fd5cda214ee871",
         "type": "github"
       },
       "original": {
@@ -91,11 +109,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1773768368,
-        "narHash": "sha256-8OGTsiElJmiOYGXdIt0I+Hb1DiA4VmXx1XLId0Q9RWM=",
+        "lastModified": 1778164021,
+        "narHash": "sha256-PfFWijqcIDhBjhj5WTQ5pvYXteIAR7FwgYrnjXWG4ng=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "922114cf0f5d806ea7ff8fb99ee20bbc7c602718",
+        "rev": "5ce9f4ce830b7eec396a296df9a8b72f4f7e1600",
         "type": "github"
       },
       "original": {
@@ -109,8 +127,27 @@
         "max-messenger": "max-messenger",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
+        "supernika": "supernika",
         "vscode-server": "vscode-server",
         "yandex-browser": "yandex-browser"
+      }
+    },
+    "supernika": {
+      "inputs": {
+        "flake-utils": "flake-utils_2",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775494461,
+        "narHash": "sha256-t7oCGnNjC1IJfvsG5/cCYt96WkmR0WQtGDI0EvSdHY8=",
+        "path": "/home/spiage/repos/spiage/supernika",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/spiage/repos/spiage/supernika",
+        "type": "path"
       }
     },
     "systems": {
@@ -143,9 +180,24 @@
         "type": "github"
       }
     },
+    "systems_3": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
     "vscode-server": {
       "inputs": {
-        "flake-utils": "flake-utils_2",
+        "flake-utils": "flake-utils_3",
         "nixpkgs": [
           "nixpkgs"
         ]
@@ -172,11 +224,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773253296,
-        "narHash": "sha256-cWDpkb6W/IgMMUAsyqSbl29kqLAqXOq26CgsgJHKW8w=",
+        "lastModified": 1775695056,
+        "narHash": "sha256-e3VLTf33nX0Mkh2JvIkIGkJr+BnFBpxWdYPXqYewVgk=",
         "owner": "miuirussia",
         "repo": "yandex-browser.nix",
-        "rev": "940e96a08d42dca2102a1d455b0cee8a5b8671f0",
+        "rev": "334d5a928d1bf24e410e3113cefbb03ade2efe14",
         "type": "github"
       },
       "original": {

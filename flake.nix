@@ -7,6 +7,10 @@
   inputs.vscode-server.inputs.nixpkgs.follows = "nixpkgs";
   inputs.max-messenger.url = "github:spiage/max-messenger";
   inputs.max-messenger.inputs.nixpkgs.follows = "nixpkgs";
+  inputs.supernika.url = "path:/home/spiage/repos/spiage/supernika";
+  inputs.supernika.inputs.nixpkgs.follows = "nixpkgs";  
+  # inputs.express-messenger.url = "github:spiage/express-messenger";
+  # inputs.express-messenger.inputs.nixpkgs.follows = "nixpkgs";  
   outputs =
     {
       self,
@@ -15,12 +19,11 @@
     }@inputs:
     let
       lib = nixpkgs.lib;
-      system = "x86_64-linux";
 
       mkNixOSConfig =
         machine:
         lib.nixosSystem {
-          inherit system;
+          system = if machine == "s10" then "i686-linux" else "x86_64-linux";
           modules = [ (./machines + "/${machine}.nix") ];
           specialArgs = { inherit inputs; };
         };
@@ -34,11 +37,12 @@
         "a2"
         "s9"
         "z1"
+        "s10"
       ];
 
     in
     {
       nixosConfigurations = lib.genAttrs machines mkNixOSConfig;
-      formatter.x86_64-linux = nixpkgs.legacyPackages.${system}.nixfmt-tree;
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-tree;
     };
 }

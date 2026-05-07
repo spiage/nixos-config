@@ -21,7 +21,7 @@
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix
     ../profiles/network/dns-client.nix
-    ../profiles/storage/smb-server.nix
+    # ../profiles/storage/smb-server.nix  # отключено из-за краша samba-nmbd
     ../profiles/desktop/fonts.nix
     ../profiles/desktop/plasma6.nix
     ../profiles/desktop/printing.nix
@@ -58,7 +58,6 @@
   #  system.etc.overlay.enable = true; # /etc via overlay filesystem
   boot.initrd.kernelModules = [
     "amdgpu"
-    "coretemp"
   ];
   boot.kernelParams = [
     "video=DP-1:1920x1080@60"
@@ -66,7 +65,7 @@
     "mitigations=off"
     "preempt=full"
     "nowatchdog"
-    "kernel.nmi_watchdog=0"
+    "systemd.watchdog_device="
   ];
   boot.initrd.availableKernelModules = [
     "nvme"
@@ -82,16 +81,17 @@
     "mt7921e"
     "k10temp"
   ];
+  boot.kernel.sysctl."kernel.sysrq" = 1;
   # boot.zfs.extraPools = [ "store_pool" ];
   # services.zfs.autoScrub.enable = true;
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/26aceccc-68ac-40b5-9967-800602c65cc1";
-    fsType = "ext4";
+    device = "/dev/disk/by-uuid/4f6cd9b8-0f42-41f4-b5d7-c243fdc2e031";
+    fsType = "xfs";
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/42EA-18D7";
+    device = "/dev/disk/by-uuid/2C44-50DB";
     fsType = "vfat";
     options = [
       "fmask=0022"
@@ -99,13 +99,13 @@
     ];
   };
 
-  fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/064f7210-f542-4e05-84a8-db2e6817b263";
-    fsType = "btrfs";
-  };
+  # fileSystems."/home" = {
+  #   device = "/dev/disk/by-uuid/064f7210-f542-4e05-84a8-db2e6817b263";
+  #   fsType = "btrfs";
+  # };
 
   swapDevices = [
-    #     { device = "/dev/disk/by-label/swap200"; }
+    { device = "/dev/disk/by-uuid/7a870eac-8537-4f59-b38d-c85b19da587a"; }
   ];
 
   # fileSystems."/mnt/nfs" = {
@@ -113,8 +113,18 @@
   #   fsType = "nfs";
   # };
 
+  powerManagement.enable = true;
+
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  # nix.settings.extra-platforms = [ "i686-linux" ];
   #hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  # nixpkgs.overlays = [
+  #   (final: prev: {
+  #     nix = prev.nix.overrideAttrs (_: {
+  #       doCheck = false;
+  #     });
+  #   })
+  # ];  
 
   # AMD GPU драйвер
   services.xserver.videoDrivers = [
@@ -178,20 +188,20 @@
   programs.starship.enable = true;
   programs.starship.presets = [ "nerd-font-symbols" ];
 
-  fileSystems."/mnt/smb_pub" = {
-    device = "//j4/Public";
-    fsType = "cifs";
-    options =
-      let
-        # this line prevents hanging on network split
-        # automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
-        automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,user,users";
+  # fileSystems."/mnt/smb_pub" = {
+  #   device = "//j4/Public";
+  #   fsType = "cifs";
+  #   options =
+  #     let
+  #       # this line prevents hanging on network split
+  #       # automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s";
+  #       automount_opts = "x-systemd.automount,noauto,x-systemd.idle-timeout=60,x-systemd.device-timeout=5s,x-systemd.mount-timeout=5s,user,users";
 
-        # in ["${automount_opts},credentials=/etc/nixos/smb-secrets"];
-        # in ["${automount_opts},credentials=/etc/nixos/smb-secrets,uid=${toString config.users.users.spiage.uid},gid=${toString config.groups.users.gid}"];
-      in
-      [ "${automount_opts},credentials=/etc/nixos/smb-secrets,uid=1000,gid=100" ];
-  };
+  #       # in ["${automount_opts},credentials=/etc/nixos/smb-secrets"];
+  #       # in ["${automount_opts},credentials=/etc/nixos/smb-secrets,uid=${toString config.users.users.spiage.uid},gid=${toString config.groups.users.gid}"];
+  #     in
+  #     [ "${automount_opts},credentials=/etc/nixos/smb-secrets,uid=1000,gid=100" ];
+  # };
   fileSystems."/mnt/store/zstd19" = {
     device = "//f1.k8s.local/downloads";
     fsType = "cifs";
@@ -206,6 +216,7 @@
       "x-systemd.automount"
       "x-systemd.device-timeout=10"
       "x-systemd.mount-timeout=10"
+      "x-systemd.lazy-unmount=true"
       "credentials=/etc/smb-secrets"
       "uid=${uid}"
       "gid=${gid}"
@@ -277,19 +288,25 @@
   services.gvfs.enable = true; # Browsing samba shares with GVFS
   # networking.firewall.extraCommands = ''iptables -t raw -A OUTPUT -p udp -m udp --dport 137 -j CT --helper netbios-ns'';
 
-  services.flatpak.enable = true;
-  programs.nix-ld.enable = true;
-
   nixpkgs.config.permittedInsecurePackages = [
     "libxml2-2.13.8"
   ];
 
   environment.systemPackages = with pkgs; [
 
+    virt-viewer
+
+    opencode-desktop
+
+    foot
+    fish
+
+    inputs.supernika.packages.${pkgs.system}.default
+
     mdbook
     mdbook-mermaid
 
-    qwen-code
+    # qwen-code
 
     mission-center
 
@@ -341,7 +358,7 @@
     # ascii-draw
     # yed
     #obsidian #I'm tired - electron-unwrapped~=44K of builds
-    zotero
+    # zotero # headache with "building firefox-140.9.1esr.source.tar.xz"
     kubevirt
 
     ghostty
@@ -508,6 +525,7 @@
         mkdocs
         mkdocs-material
         mkdocs-mermaid2-plugin
+        mkdocs-minify-plugin
       ]
     )) # !!! waiting for https://github.com/NixOS/nixpkgs/pull/285959
     # gcc

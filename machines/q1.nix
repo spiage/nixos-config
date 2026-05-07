@@ -19,6 +19,8 @@
     # ../profiles/k3s.nix
   ];
 
+  virtualisation.libvirtd.enable = lib.mkForce false;  
+
   profiles.networking.dns-dhcp-server = {
     enable = true;
     forwarders = [
@@ -75,7 +77,7 @@
       {
         mac = "c0:18:85:40:41:33";
         ip = "192.168.1.17";
-        name = "aod270";
+        name = "a2";
         description = "core";
       }
       # Виртуальные машины

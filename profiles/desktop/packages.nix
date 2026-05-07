@@ -2,6 +2,8 @@
 {
   # Базовый набор пакетов для всех десктопов
   # Включает: мониторинг, утилиты, KDE приложения, браузеры
+  services.flatpak.enable = true;
+  programs.nix-ld.enable = true;
 
   environment.systemPackages = with pkgs; [
     # Мониторинг и диагностика
@@ -66,7 +68,7 @@
     vlc
 
     # Удалённый доступ
-    remmina
+    # remmina # will use flatpak version
 
     # Языки программирования
     python3
