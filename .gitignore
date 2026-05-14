@@ -9,3 +9,4 @@ flake.lock
 
 # Scripts (temp files)
 scripts/*.deb
+1.md

@@ -123,6 +123,7 @@
   # Полное отключение systemd-resolved
   services.resolved.enable = false;
   # systemd.services.systemd-resolved.enable = false;
+  networking.resolvconf.enable = false;
   environment.etc."resolv.conf".text = ''
     nameserver 127.0.0.1
     nameserver 192.168.1.1
