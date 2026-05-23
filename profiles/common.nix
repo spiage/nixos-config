@@ -123,6 +123,19 @@ in
     # "zfs"
   ];
   boot.kernelPackages = pkgs.linuxPackages_latest; # latestKernelPackage;
+  # boot.kernelPackages = pkgs.linuxKernel.packagesFor (
+  #   pkgs.linuxKernel.kernels.linux_7_0.override {
+  #     argsOverride = rec {
+  #       version = "7.0.6";
+  #       modDirVersion = version;
+  #       src = pkgs.fetchurl {
+  #         url = "mirror://kernel/linux/kernel/v7.x/linux-${version}.tar.xz";
+  #         sha256 = "sha256-y6REQKpXr/18ISQdxbwjSw31PEmfj/w+vCkN0zkKdSM="; 
+  #       };
+  #     };
+  #   }
+  # );
+
   boot.swraid.enable = false;
   boot.initrd.systemd.enable = true;
   boot.loader.systemd-boot.memtest86.enable = true;
