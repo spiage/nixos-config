@@ -8,13 +8,15 @@
   services.xserver.xkb.options = "grp:win_space_toggle";
 
   services.desktopManager.plasma6.enable = true;
-  services.desktopManager.plasma6.enableQt5Integration = false;
+  # services.desktopManager.plasma6.enableQt5Integration = false;
 
-  # services.displayManager.sddm.enable = true;
+  services.displayManager.sddm.enable = true;
   # services.displayManager.sddm.wayland.enable = true;
-  services.displayManager.plasma-login-manager.enable = true;
+  # services.displayManager.plasma-login-manager.enable = true;
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "spiage";
+
+  # services.displayManager.defaultSession = "plasmax11";
 
   services.libinput.enable = true;
 

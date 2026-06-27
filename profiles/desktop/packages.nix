@@ -61,7 +61,7 @@
     vulkan-tools
 
     # Прошивки и диски
-    fwupd
+    # fwupd
     nvme-cli
 
     # Мультимедиа

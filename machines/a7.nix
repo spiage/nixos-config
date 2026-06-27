@@ -23,6 +23,7 @@
     ../profiles/network/dns-client.nix
     # ../profiles/storage/smb-server.nix  # отключено из-за краша samba-nmbd
     ../profiles/desktop/fonts.nix
+    # ../profiles/desktop/cosmic.nix
     ../profiles/desktop/plasma6.nix
     ../profiles/desktop/printing.nix
     ../profiles/desktop/pipewire.nix
@@ -141,13 +142,16 @@
   };
 
   services.libinput.enable = true;
-  # services.fwupd.enable = true;
+  services.fwupd.enable = lib.mkForce false;
 
   # чтобы избежать "Too many open files"
   # Глобальный лимит для всей пользовательской сессии systemd
-  systemd.user.extraConfig = ''
-    DefaultLimitNOFILE=65536
-  '';
+  # systemd.user.extraConfig = ''
+  #   DefaultLimitNOFILE=65536
+  # '';
+      #  Failed assertions:
+      #  - The option definition `systemd.user.extraConfig' in `/nix/store/yi7cww4xhplhrlmdj8z161fb8mhgsf7y-source/machines/a7.nix' no longer has any effect; please remove it.
+      #  Use systemd.user.settings.Manager instead.  
   systemd.services.nix-daemon.serviceConfig = {
     LimitNOFILE = 1048576;
   };
@@ -292,6 +296,13 @@
     "libxml2-2.13.8"
   ];
 
+  programs.dconf.enable = true;
+
+  environment.variables = {
+    GTK_THEME = "Breeze-Dark";
+    QT_QPA_PLATFORMTHEME = "kde";
+  };
+
   environment.systemPackages = with pkgs; [
 
     virt-viewer
@@ -435,7 +446,14 @@
     # firefox
 
     # microsoft-edge #error: microsoft-edge has been removed due to lack of maintenance in nixpkgs
-    inputs.yandex-browser.packages.x86_64-linux.yandex-browser-stable
+    # inputs.yandex-browser.packages.x86_64-linux.yandex-browser-stable
+    (inputs.yandex-browser.packages.x86_64-linux.yandex-browser-stable.overrideAttrs (oldAttrs: {
+      installPhase = builtins.replaceStrings 
+        [ "FLAGS=\"$FLAGS --ozone-platform=wayland\"" ] 
+        [ "FLAGS=\"$FLAGS --ozone-platform=x11\"" ] 
+        oldAttrs.installPhase;
+    }))
+
     # inputs.ki-editor.packages.x86_64-linux.default
     # yandex-browser
 
@@ -562,7 +580,9 @@
     crosspipe #'helvum' has been removed as it was unmaintained upstream and relied on a vulnerable dependency. Consider using 'crosspipe' instead.
     qpwgraph
   ];
-
+  # environment.plasma6.excludePackages = with pkgs.kdePackages; [
+  #   discover
+  # ];
   system.stateVersion = lib.mkForce "23.05"; # Did you read the comment?
 
 }

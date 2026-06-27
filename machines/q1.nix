@@ -50,12 +50,18 @@
         name = "f1";
         description = "core";
       }
-      # {
-      #   mac = "2c:f0:5d:29:f6:01";
-      #   ip = "192.168.1.201";
-      #   name = "i9";
-      #   description = "core";
-      # }
+      {
+        mac = "c8:4d:44:33:5e:a8";
+        ip = "192.168.1.145";
+        name = "m11";
+        description = "core";
+      }
+      {
+        mac = "c4:b3:01:8a:da:b6";
+        ip = "192.168.1.146";
+        name = "m11";
+        description = "core";
+      }
       {
         mac = "a8:42:a1:ff:eb:e3";
         ip = "192.168.1.15";

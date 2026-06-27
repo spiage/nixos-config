@@ -216,6 +216,9 @@ in
     })
   ];
 
+  # virtualisation.waydroid.enable = true;
+  # virtualisation.waydroid.package = pkgs.waydroid-nftables;
+
   virtualisation.spiceUSBRedirection.enable = true;
   virtualisation.libvirtd = {
     enable = true;
@@ -277,7 +280,7 @@ in
 
   services.rsyncd.enable = true;
   services.openssh.enable = true;
-  services.fwupd.enable = true;
+  # services.fwupd.enable = true;
 
   virtualisation.docker.extraOptions = ''--iptables=false --ip-masq=false -b br0'';
 
@@ -311,7 +314,7 @@ in
     nvd
     p7zip
     rar
-    fwupd
+    # fwupd
     nvme-cli
     # hw-probe
     inxi
