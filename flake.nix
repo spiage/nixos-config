@@ -3,14 +3,16 @@
   inputs.yandex-browser.url = "github:miuirussia/yandex-browser.nix";
   inputs.yandex-browser.inputs.nixpkgs.follows = "nixpkgs";
   inputs.nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-  inputs.vscode-server.url = "github:nix-community/nixos-vscode-server";
-  inputs.vscode-server.inputs.nixpkgs.follows = "nixpkgs";
+  # inputs.vscode-server.url = "github:nix-community/nixos-vscode-server";
+  # inputs.vscode-server.inputs.nixpkgs.follows = "nixpkgs";
   inputs.max-messenger.url = "github:spiage/max-messenger";
   inputs.max-messenger.inputs.nixpkgs.follows = "nixpkgs";
   inputs.supernika.url = "path:/home/spiage/repos/spiage/supernika";
   inputs.supernika.inputs.nixpkgs.follows = "nixpkgs";  
   # inputs.express-messenger.url = "github:spiage/express-messenger";
   # inputs.express-messenger.inputs.nixpkgs.follows = "nixpkgs";  
+  inputs.shitty.url = "github:pg83/shitty";
+  inputs.shitty.inputs.nixpkgs.follows = "nixpkgs";
   outputs =
     {
       self,
@@ -40,6 +42,7 @@
         "s10"
         "m11"
         "i5"
+        "p8"
       ];
 
     in

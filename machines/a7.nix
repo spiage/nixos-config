@@ -17,7 +17,7 @@
     inputs.nixos-hardware.nixosModules.common-hidpi
     inputs.nixos-hardware.nixosModules.common-pc
     inputs.nixos-hardware.nixosModules.common-pc-ssd
-    inputs.vscode-server.nixosModules.default
+    # inputs.vscode-server.nixosModules.default
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix
     ../profiles/network/dns-client.nix
@@ -31,7 +31,7 @@
     ../profiles/hardware/graphics.nix
   ];
 
-  services.vscode-server.enable = true;
+  # services.vscode-server.enable = true;
 
   systemd.network = {
     links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [
@@ -87,12 +87,14 @@
   # services.zfs.autoScrub.enable = true;
 
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/4f6cd9b8-0f42-41f4-b5d7-c243fdc2e031";
+    # device = "/dev/disk/by-uuid/4f6cd9b8-0f42-41f4-b5d7-c243fdc2e031";
+    device = "/dev/disk/by-label/root-nvme";
     fsType = "xfs";
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/2C44-50DB";
+    # device = "/dev/disk/by-uuid/2C44-50DB";
+    device = "/dev/disk/by-label/BOOT-EFI";
     fsType = "vfat";
     options = [
       "fmask=0022"
@@ -105,9 +107,9 @@
   #   fsType = "btrfs";
   # };
 
-  swapDevices = [
-    { device = "/dev/disk/by-uuid/7a870eac-8537-4f59-b38d-c85b19da587a"; }
-  ];
+  # swapDevices = [
+  #   { device = "/dev/disk/by-uuid/7a870eac-8537-4f59-b38d-c85b19da587a"; }
+  # ];
 
   # fileSystems."/mnt/nfs" = {
   #   device = "j4:/vpool";
@@ -142,7 +144,8 @@
   };
 
   services.libinput.enable = true;
-  services.fwupd.enable = lib.mkForce false;
+  # services.fwupd.enable = lib.mkForce false;
+  services.fwupd.enable = true;
 
   # чтобы избежать "Too many open files"
   # Глобальный лимит для всей пользовательской сессии systemd
@@ -303,11 +306,17 @@
     QT_QPA_PLATFORMTHEME = "kde";
   };
 
+  # documentation.nixos.enable = false;
+
   environment.systemPackages = with pkgs; [
+
+    inputs.shitty.packages.${system}.default
+
+    efibootmgr
 
     virt-viewer
 
-    opencode-desktop
+    # opencode-desktop
 
     foot
     fish

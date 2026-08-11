@@ -47,6 +47,7 @@
     # Архиваторы
     p7zip
     rar
+    pigz
 
     # Сетевые утилиты
     bridge-utils
@@ -63,6 +64,7 @@
     # Прошивки и диски
     # fwupd
     nvme-cli
+    gptfdisk
 
     # Мультимедиа
     vlc

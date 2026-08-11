@@ -328,7 +328,7 @@ in
     rsync
     restic
     rustic
-    borgbackup
+    # borgbackup
     # pika-backup
     rclone
     smartmontools
