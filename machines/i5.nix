@@ -3,7 +3,7 @@
 
   imports = [
     ../profiles/boot/systemd-boot.nix
-    ../profiles/common.nix
+    ../profiles/homelab.nix
     ../profiles/laptop.nix
     ../profiles/network/dns-client.nix
     ../profiles/desktop/fonts.nix

@@ -4,7 +4,7 @@
 
   imports = [
     inputs.nixos-hardware.nixosModules.apple-macbook-air-7
-    ../profiles/common.nix
+    ../profiles/homelab.nix
     ../profiles/laptop.nix
     ../profiles/boot/systemd-boot.nix
     ../profiles/network/dns-client.nix

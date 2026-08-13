@@ -15,7 +15,7 @@
     ../profiles/video/nvidia-simple.nix
     ../profiles/network/ntp-server-ru.nix
     ../profiles/network/dnsmasq.nix
-    ../profiles/common.nix
+    ../profiles/homelab.nix
     # ../profiles/k3s.nix
   ];
 

@@ -40,7 +40,7 @@
     ../profiles/boot/grub2.nix
     ../profiles/video/nvidia-simple.nix
     ../profiles/network/dns-client.nix
-    ../profiles/common.nix
+    ../profiles/homelab.nix
     # ../profiles/k3s.nix
     # ../profiles/libvirt-vms.nix
   ];

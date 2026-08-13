@@ -19,7 +19,7 @@
     inputs.nixos-hardware.nixosModules.common-pc-ssd
     # inputs.vscode-server.nixosModules.default
     ../profiles/boot/systemd-boot.nix
-    ../profiles/common.nix
+    ../profiles/homelab.nix
     ../profiles/network/dns-client.nix
     # ../profiles/storage/smb-server.nix  # отключено из-за краша samba-nmbd
     ../profiles/desktop/fonts.nix

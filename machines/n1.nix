@@ -6,7 +6,7 @@
   imports = [
     ../profiles/boot/systemd-boot.nix
     ../profiles/network/dns-client.nix
-    ../profiles/common.nix
+    ../profiles/homelab.nix
   ];
   systemd.network = {
     links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [

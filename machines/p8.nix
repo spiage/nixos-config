@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
 {
 
@@ -11,6 +11,7 @@
     inputs.nixos-hardware.nixosModules.common-pc-ssd
     ../profiles/boot/systemd-boot.nix
     ../profiles/common.nix
+    ../profiles/laptop.nix
     ../profiles/network/dns-client.nix
     ../profiles/desktop/fonts.nix
     ../profiles/desktop/plasma6.nix
@@ -20,26 +21,27 @@
     ../profiles/hardware/graphics.nix
   ];
 
-  systemd.network = {
-    links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [
-      # Объединение через пробел
-      "00:e0:4c:5d:8f:25" # Физический интерфейс
-    ];
-
-    networks = {
-      "30-br0" = {
-        address = [
-          "192.168.1.109/16"
-          # Для IPv6 (если нужно):
-          # "2001:db8::a7/64"
-        ];
-        networkConfig = {
-          DNS = "192.168.1.18"; # DNS-сервер q1
-          Gateway = "192.168.1.1";
-        };
-      };
-    };
-  };
+  systemd.network.enable = lib.mkForce false;
+#  systemd.network = {
+#    links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [
+#      # Объединение через пробел
+#      "00:e0:4c:5d:8f:25" # Физический интерфейс
+#    ];
+#
+#    networks = {
+#      "30-br0" = {
+#        address = [
+#          "192.168.1.109/16"
+#          # Для IPv6 (если нужно):
+#          # "2001:db8::a7/64"
+#        ];
+#        networkConfig = {
+#          DNS = "192.168.1.18"; # DNS-сервер q1
+#          Gateway = "192.168.1.1";
+#        };
+#      };
+#    };
+#  };
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
@@ -70,7 +72,9 @@
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   networking.hostName = "p8"; # Define your hostname.
-  networking.networkmanager.enable = true;
+  networking.networkmanager.enable = lib.mkForce true;
+
+  virtualisation.libvirtd.enable = lib.mkForce false;
 
   environment.systemPackages = with pkgs; [
   ];
