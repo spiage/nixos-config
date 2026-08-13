@@ -22,26 +22,6 @@
   ];
 
   systemd.network.enable = lib.mkForce false;
-#  systemd.network = {
-#    links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [
-#      # Объединение через пробел
-#      "00:e0:4c:5d:8f:25" # Физический интерфейс
-#    ];
-#
-#    networks = {
-#      "30-br0" = {
-#        address = [
-#          "192.168.1.109/16"
-#          # Для IPv6 (если нужно):
-#          # "2001:db8::a7/64"
-#        ];
-#        networkConfig = {
-#          DNS = "192.168.1.18"; # DNS-сервер q1
-#          Gateway = "192.168.1.1";
-#        };
-#      };
-#    };
-#  };
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
