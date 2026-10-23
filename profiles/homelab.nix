@@ -199,8 +199,8 @@ in
     inxi
     # phoronix-test-suite     yasm     nasm cmake unzip x264 ## $phoronix-test-suite benchmark build-ffmpeg
     # geekbench
-    restic
-    rustic
+    # restic # Backup program that is fast, efficient and secure
+    # rustic # Fast, encrypted, deduplicated backups powered by pure Rust
     # borgbackup
     # pika-backup
     rclone

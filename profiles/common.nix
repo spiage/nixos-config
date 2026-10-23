@@ -38,7 +38,7 @@
   # );
 
   boot.swraid.enable = false;
-  boot.initrd.systemd.enable = true;
+  # boot.initrd.systemd.enable = true; #  The option definition `boot.initrd.systemd.enable' in `/nix/store/f8annkzh81qrfpr54zk0zn78a902wg6c-source/profiles/common.nix' no longer has any effect; please remove it.
   boot.loader.systemd-boot.memtest86.enable = true;
 
   hardware.enableRedistributableFirmware = lib.mkDefault true; # lib.mkDefault config.hardware.enableRedistributableFirmware;

@@ -196,7 +196,6 @@
 
   hardware.opengl.enable = true;
   # hardware.opengl.driSupport = true;
-  boot.initrd.systemd.enable = true;
   hardware.nvidia.prime = {
     reverseSync.enable = true;
     allowExternalGpu = false;

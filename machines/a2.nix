@@ -1,7 +1,7 @@
 { config, lib, pkgs, inputs, ... }:
 {
   imports = [
-    ../profiles/common.nix
+    ../profiles/homelab.nix
     ../profiles/laptop.nix
   ];
 

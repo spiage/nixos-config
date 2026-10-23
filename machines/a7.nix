@@ -32,7 +32,27 @@
   ];
 
   # services.vscode-server.enable = true;
+# services.throttled.enable = true;
+# environment.etc."lenovo_fix.conf".text = ''
+#   [General]
+#   Enabled: True
+#   Sysfs_Power_Path: /sys/class/power_supply/AC
+#   Update_Rate_s: 5
 
+#   [AC]
+#   Trip_Temp_C: 95
+#   Power_Limit_W_ST: 44
+#   Time_Window_ST: 28
+#   Power_Limit_W_LT: 30
+#   cTDP_Value: 2
+
+#   [Battery]
+#   Trip_Temp_C: 85
+#   Power_Limit_W_ST: 25
+#   Time_Window_ST: 28
+#   Power_Limit_W_LT: 15
+#   cTDP_Value: 1
+# '';
   systemd.network = {
     links."10-eth0".matchConfig.MACAddress = lib.concatStringsSep " " [
       # Объединение через пробел
@@ -191,9 +211,52 @@
   # # virtualisation.docker.extraOptions =
   # #   ''--iptables=false --ip-masq=false -b br0'';
 
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestions.enable = true;
+    syntaxHighlighting.enable = true;
+
+    shellAliases = {
+      ll = "ls -l";
+      edit = "sudo -e";
+    };
+
+    histSize = 1000000;
+    histFile = "$HOME/.zsh_history";
+    setOptions = [
+      "HIST_IGNORE_ALL_DUPS"
+    ];
+  };
+  users.extraUsers.spiage = {
+    shell = pkgs.zsh;
+  };
+
   programs.starship.enable = true;
   programs.starship.presets = [ "nerd-font-symbols" ];
+  # programs.appimage = {
+  #   enable = true;
+  #   binfmt = true;
+  # };
+  # programs.nix-ld = {
+  #   enable = true;
+  #   libraries = with pkgs; [
+  #     glib
+  #     freetype
+  #     fontconfig
+  #     wayland
+  #     gtk3
+  #     libxkbcommon
+  #     xkeyboard_config
+  #   ];  
+  # };
+  # system.activationScripts.linkXKB = {
+  #   text = ''
+  #     mkdir -p /usr/share/X11
+  #     ln -sfn /run/current-system/sw/share/X11/xkb /usr/share/X11/xkb
+  #   '';
+  # };
+
 
   # fileSystems."/mnt/smb_pub" = {
   #   device = "//j4/Public";
@@ -308,7 +371,117 @@
 
   # documentation.nixos.enable = false;
 
+  nixpkgs.overlays = [
+    (final: prev: {
+
+      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [ (pyfinal: pyprev: {
+        curl-cffi = pyprev.curl-cffi.overridePythonAttrs (oldAttrs: {
+          doCheck = false;
+          doInstallCheck = false;
+          dontCheck = true;
+        });
+#        langchain-community = pyprev.langchain-community.overridePythonAttrs (oldAttrs: {
+#          doCheck = false;
+#          doInstallCheck = false;
+#          dontCheck = true;
+#        });
+      }) ];
+
+      kdePackages = prev.kdePackages.overrideScope (kFinal: kPrev: {
+        kwin-x11 = prev.runCommand "kwin-x11-dummy" {} "mkdir -p $out";
+      });
+
+    })
+
+    # Fix: Horizon Client dlopen("libpipewire-0.3.so.0") не находит библиотеку
+    # в Nix store и молча отключает вывод звука. Пропатчиваем nixpkgs-версию
+    # package.nix: добавляем pipewire в LD_LIBRARY_PATH враппера и в FHS.
+    (final: prev:
+      let
+        pipewirePath = final.lib.makeLibraryPath [ final.pipewire ];
+
+        original = builtins.readFile
+          "${prev.path}/pkgs/by-name/om/omnissa-horizon-client/package.nix";
+
+        patched = builtins.replaceStrings
+          [
+            "  makeWrapper,\n  opensc,"
+            "--suffix LD_LIBRARY_PATH : \"$out/lib/omnissa/horizon/crtbora:$out/lib/omnissa\""
+            "          pcsclite\n          pixman"
+          ]
+          [
+            "  makeWrapper,\n  opensc,\n  pipewire,"
+            "--suffix LD_LIBRARY_PATH : \"$out/lib/omnissa/horizon/crtbora:$out/lib/omnissa:${pipewirePath}\""
+            "          pcsclite\n          pipewire\n          pixman"
+          ]
+          original;
+
+        patchedFile = prev.writeText "omnissa-horizon-client-patched.nix" patched;
+      in
+      {
+        omnissa-horizon-client = prev.callPackage patchedFile {};
+      }
+    )
+  ];
+
+  programs.obs-studio.enable = true;
+
   environment.systemPackages = with pkgs; [
+
+  # (pkgs.buildFHSEnv {
+  #   name = "telegram-bin";
+  #   targetPkgs = pkgs: with pkgs; [
+  #     gtk3
+  #     glib
+  #     libxkbcommon
+  #     xkeyboard_config
+  #     wayland
+  #     libGL
+  #     dbus
+  #     libpulseaudio
+  #     alsa-lib
+  #     pango
+  #     cairo
+  #     gdk-pixbuf
+  #     freetype
+  #     fontconfig 
+  #     pipewire
+  #     libx11
+  #     mesa # Важно: Mesa должна быть внутри, чтобы сослаться на libEGL_mesa.so
+  #     libglvnd # Добавим glvnd для работы EGL-слоя
+  #   ];
+  #   unshareNet = false;
+
+  #   runScript = pkgs.writeScript "tg-wayland-wrapper" ''
+  #     #!/bin/sh
+      
+  #     # 1. Пробрасываем базовые либы и драйверы рендеринга (DRI) хоста
+  #     export LD_LIBRARY_PATH=/run/opengl-driver/lib:$LD_LIBRARY_PATH
+  #     export LIBGL_DRIVERS_PATH=/run/opengl-driver/lib/dri
+  #     export LIBVA_DRIVERS_PATH=/run/opengl-driver/lib/dri
+
+  #     # 2. РЕШЕНИЕ: Создаем локальный EGL-манифест для Mesa внутри FHS-окружения
+  #     # Это заставит libglvnd использовать локальную библиотеку Mesa контейнера (/usr/lib)
+  #     # вместо путей хоста (/nix/store), которые недоступны внутри FHS.
+  #     mkdir -p /tmp/egl_vendor.d
+  #     cat <<EOF > /tmp/egl_vendor.d/50_mesa.json
+  #     {
+  #         "file_format_version" : "1.0.0",
+  #         "ICD" : {
+  #             "library_path" : "libEGL_mesa.so.0"
+  #         }
+  #     }
+  #     EOF
+      
+  #     # Указываем GLVND искать манифест в созданном нами каталоге /tmp
+  #     export __EGL_VENDOR_LIBRARY_DIRS=/tmp/egl_vendor.d
+
+  #     # 3. Насильно включаем нативный Wayland
+  #     export QT_QPA_PLATFORM=wayland
+      
+  #     exec /home/spiage/Загрузки/Telegram/Telegram "$@"
+  #   '';
+  # })
 
     inputs.shitty.packages.${system}.default
 
@@ -582,7 +755,7 @@
 
     nut
 
-    masterpdfeditor
+    # masterpdfeditor
     masterpdfeditor4
     # terminator
 

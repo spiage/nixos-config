@@ -25,9 +25,10 @@
     enable = true;
     forwarders = [
       "192.168.1.1" # Локальный роутер
-      "1.1.1.1" # Cloudflare Primary
-      "8.8.8.8" # Google Primary
-      "9.9.9.9" # Quad9 (резервный)
+      "77.88.8.8" # Yandex Base
+      # "1.1.1.1" # Cloudflare Primary
+      # "8.8.8.8" # Google Primary
+      # "9.9.9.9" # Quad9 (резервный)
     ];
 
     staticHosts = [
