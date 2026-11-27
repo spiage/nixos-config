@@ -15,7 +15,7 @@
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
     inputs.nixos-hardware.nixosModules.common-pc
     inputs.nixos-hardware.nixosModules.common-pc-ssd
-    inputs.vscode-server.nixosModules.default
+    # inputs.vscode-server.nixosModules.default
     ../profiles/boot/systemd-boot.nix
     ../profiles/network/dns-client.nix
     ../profiles/homelab.nix
@@ -155,7 +155,7 @@
     podman-compose
     distrobox
     ollama
-    (pkgs.gpufetch.override { cudaSupport = true; })
+    # (pkgs.gpufetch.override { cudaSupport = true; })
     nvtopPackages.nvidia
 #    gwe
     vulkan-tools
@@ -164,7 +164,7 @@
     uv
     #      nvidia-vaapi-driver
     # guestfs-tools # Extra tools for accessing and modifying virtual machine disk images
-    libguestfs-with-appliance
+    # libguestfs-with-appliance #This package is broken.
   ];
 
   environment.shellAliases = {
@@ -249,7 +249,7 @@
   };
 
   services.open-webui = {
-    enable = true;
+    # enable = true;
     port = 8081;
     environment = {
       ANONYMIZED_TELEMETRY = "False";
